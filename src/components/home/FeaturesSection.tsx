@@ -24,9 +24,10 @@ type FeatureItem = {
   icon: LucideIcon;
   pos: { left: string; top: string };
   posClass?: string;
+  align?: "left" | "right" | "top" | "bottom";
 };
 
-// 8 feature nodes arranged symmetrically in a PROPER CIRCLE
+// 8 feature nodes arranged symmetrically in a PROPER CIRCLE with outward-radiating text
 const featuresList: FeatureItem[] = [
   {
     id: "printable",
@@ -35,8 +36,9 @@ const featuresList: FeatureItem[] = [
     color: "#b45309",
     bgColor: "#fffbeb",
     icon: Box,
-    pos: { left: "16%", top: "18%" },
-    posClass: "-translate-y-1/2",
+    pos: { left: "35%", top: "25%" },
+    posClass: "-translate-x-full -translate-y-1/2",
+    align: "left",
   },
   {
     id: "oven-safe",
@@ -47,6 +49,7 @@ const featuresList: FeatureItem[] = [
     icon: Microwave,
     pos: { left: "50%", top: "6%" },
     posClass: "-translate-x-1/2 -translate-y-1/2",
+    align: "top",
   },
   {
     id: "hygienic",
@@ -55,8 +58,9 @@ const featuresList: FeatureItem[] = [
     color: "#0284c7",
     bgColor: "#f0f9ff",
     icon: ShieldCheck,
-    pos: { left: "67%", top: "18%" },
+    pos: { left: "65%", top: "25%" },
     posClass: "-translate-y-1/2",
+    align: "right",
   },
   {
     id: "stackable",
@@ -67,6 +71,7 @@ const featuresList: FeatureItem[] = [
     icon: Layers,
     pos: { left: "72%", top: "50%" },
     posClass: "-translate-y-1/2",
+    align: "right",
   },
   {
     id: "bpa-free",
@@ -75,8 +80,9 @@ const featuresList: FeatureItem[] = [
     color: "#16a34a",
     bgColor: "#f0fdf4",
     icon: Leaf,
-    pos: { left: "67%", top: "82%" },
+    pos: { left: "65%", top: "75%" },
     posClass: "-translate-y-1/2",
+    align: "right",
   },
   {
     id: "food-safe",
@@ -87,6 +93,7 @@ const featuresList: FeatureItem[] = [
     icon: Utensils,
     pos: { left: "50%", top: "94%" },
     posClass: "-translate-x-1/2 -translate-y-1/2",
+    align: "bottom",
   },
   {
     id: "freezer-safe",
@@ -95,8 +102,9 @@ const featuresList: FeatureItem[] = [
     color: "#2563eb",
     bgColor: "#eff6ff",
     icon: Snowflake,
-    pos: { left: "16%", top: "82%" },
-    posClass: "-translate-y-1/2",
+    pos: { left: "35%", top: "75%" },
+    posClass: "-translate-x-full -translate-y-1/2",
+    align: "left",
   },
   {
     id: "recyclable",
@@ -105,8 +113,9 @@ const featuresList: FeatureItem[] = [
     color: "#15803d",
     bgColor: "#f0fdf4",
     icon: Recycle,
-    pos: { left: "10%", top: "50%" },
-    posClass: "-translate-y-1/2",
+    pos: { left: "28%", top: "50%" },
+    posClass: "-translate-x-full -translate-y-1/2",
+    align: "left",
   },
 ];
 
@@ -234,17 +243,16 @@ export function FeaturesSection({ index = "02" }: Props) {
         );
       });
 
-      // Mobile (< 768px): subtle entrance if motion allowed, elements are ALWAYS visible by default
+      // Mobile (< 768px): subtle slide-up entrance without opacity hiding (icons & cards ALWAYS 100% visible)
       mm.add("(max-width: 767px)", () => {
         gsap.from(".feature-mobile-card", {
-          opacity: 0,
-          y: 12,
-          duration: 0.4,
-          stagger: 0.03,
+          y: 8,
+          duration: 0.35,
+          stagger: 0.02,
           ease: "power2.out",
           scrollTrigger: {
             trigger: containerRef.current,
-            start: "top 95%",
+            start: "top 90%",
             once: true,
           },
         });
@@ -265,21 +273,21 @@ export function FeaturesSection({ index = "02" }: Props) {
   return (
     <section
       ref={containerRef}
-      className="relative bg-white flex flex-col justify-between py-6 sm:py-8 lg:py-[2.5vw] border-b border-slate-100 overflow-hidden"
+      className="relative bg-white py-8 sm:py-10 md:py-12 lg:py-[2.5vw] border-b border-slate-100"
     >
-      <div className="mx-auto w-full max-w-[1380px] lg:max-w-[92vw] px-5 sm:px-8 lg:px-[4vw] relative z-10 flex-1 flex flex-col justify-between">
+      <div className="mx-auto w-full max-w-[1380px] lg:max-w-[92vw] px-4 sm:px-8 lg:px-[4vw] relative z-10">
         
         {/* Top Header: "Product" in black text, "Features" in brand blue */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shrink-0 pt-2 lg:pt-[0.5vw]">
           <div className="feature-header-left">
-            <h2 className="text-[2.6rem] sm:text-[3.2rem] lg:text-[3.3vw] font-extrabold tracking-tight leading-[1.06]">
+            <h2 className="text-[2.2rem] sm:text-[3.2rem] lg:text-[3.3vw] font-extrabold tracking-tight leading-[1.06]">
               <span className="text-slate-900">Product</span>{" "}
               <span className="text-[#024182]">Features</span>
             </h2>
           </div>
 
           <div className="feature-header-right sm:text-right max-w-sm lg:max-w-[26vw]">
-            <p className="text-slate-600 text-[14.5px] sm:text-[15.5px] lg:text-[1.05vw] font-medium leading-relaxed">
+            <p className="text-slate-600 text-[14px] sm:text-[15.5px] lg:text-[1.05vw] font-medium leading-relaxed">
               Thoughtfully designed for safer, cleaner and more convenient storage.
             </p>
           </div>
@@ -287,10 +295,10 @@ export function FeaturesSection({ index = "02" }: Props) {
 
         {/* Tablet & Desktop Circular Presentation (>= md: 768px and up) */}
         <div className="hidden md:flex flex-1 items-center justify-center relative w-full my-auto py-6 lg:py-[1.5vw]">
-          <div className="relative w-full max-w-[700px] lg:max-w-none lg:w-[62vw] h-[400px] lg:h-[35.5vw] mx-auto origin-center">
+          <div className="relative w-full max-w-[720px] lg:max-w-none lg:w-[64vw] h-[440px] md:h-[450px] lg:h-[36.5vw] mx-auto origin-center">
             
             {/* Arrow Circle with Fading Opacity on Trailing Edges */}
-            <div className="feature-orbit-ring absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] h-[320px] md:w-[350px] md:h-[350px] lg:w-[24.5vw] lg:h-[24.5vw] pointer-events-none select-none z-0">
+            <div className="feature-orbit-ring absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[320px] md:h-[320px] lg:w-[23vw] lg:h-[23vw] pointer-events-none select-none z-0">
               <svg
                 viewBox="0 0 300 300"
                 className="w-full h-full pointer-events-none"
@@ -344,7 +352,7 @@ export function FeaturesSection({ index = "02" }: Props) {
             </div>
 
             {/* Centerpiece: White Buckets with Blue Base Graphic - Sits tightly inside circle */}
-            <div className="feature-center-pails absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[190px] h-[125px] md:w-[220px] md:h-[145px] lg:w-[15.5vw] lg:h-[10.5vw] flex items-center justify-center pointer-events-none select-none z-10">
+            <div className="feature-center-pails absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[120px] md:w-[200px] md:h-[135px] lg:w-[15vw] lg:h-[10vw] flex items-center justify-center pointer-events-none select-none z-10">
               <div className="relative w-full h-full">
                 <Image
                   src="/images/features/product-features-pails.webp"
@@ -357,9 +365,13 @@ export function FeaturesSection({ index = "02" }: Props) {
               </div>
             </div>
 
-            {/* 8 Feature Nodes Aligned in a PROPER CIRCLE */}
+            {/* 8 Feature Nodes Aligned in a PROPER CIRCLE with Outward-Radiating Labels */}
             {featuresList.map((item) => {
               const IconComponent = item.icon;
+              const isLeft = item.align === "left";
+              const isTop = item.align === "top";
+              const isBottom = item.align === "bottom";
+
               return (
                 <div
                   key={item.id}
@@ -367,7 +379,19 @@ export function FeaturesSection({ index = "02" }: Props) {
                     left: item.pos.left,
                     top: item.pos.top,
                   }}
-                  className={`feature-node absolute ${item.posClass ?? "-translate-y-1/2"} flex items-center gap-2.5 md:gap-3 lg:gap-[0.75vw] group cursor-default z-20`}
+                  className={`feature-node absolute ${item.posClass ?? "-translate-y-1/2"} flex ${
+                    isLeft
+                      ? "flex-row-reverse text-right"
+                      : isTop
+                      ? "flex-col-reverse items-center text-center"
+                      : isBottom
+                      ? "flex-col items-center text-center"
+                      : "flex-row text-left items-center"
+                  } ${
+                    isTop || isBottom
+                      ? "gap-1.5 md:gap-2 lg:gap-[0.4vw]"
+                      : "items-center gap-2.5 md:gap-3 lg:gap-[0.75vw]"
+                  } group cursor-default z-20`}
                 >
                   {/* Circular Icon Badge with refined border and soft background color */}
                   <div
@@ -375,21 +399,21 @@ export function FeaturesSection({ index = "02" }: Props) {
                       borderColor: item.color,
                       backgroundColor: item.bgColor,
                     }}
-                    className="relative flex h-10 w-10 md:h-12 md:w-12 lg:h-[3.3vw] lg:w-[3.3vw] items-center justify-center rounded-full border-[1.5px] shadow-[0_4px_12px_rgba(0,0,0,0.06)] transition-all duration-300 ease-out group-hover:scale-110 group-hover:shadow-[0_6px_18px_rgba(0,0,0,0.12)] shrink-0"
+                    className="relative flex h-10 w-10 md:h-11 md:w-11 lg:h-[3.2vw] lg:w-[3.2vw] items-center justify-center rounded-full border-[1.5px] shadow-[0_4px_12px_rgba(0,0,0,0.06)] transition-all duration-300 ease-out group-hover:scale-110 group-hover:shadow-[0_6px_18px_rgba(0,0,0,0.12)] shrink-0"
                   >
                     <IconComponent
                       style={{ color: item.color }}
-                      className="h-5 w-5 md:h-6 md:w-6 lg:h-[1.65vw] lg:w-[1.65vw] transition-transform duration-300 group-hover:scale-110"
+                      className="h-5 w-5 md:h-5.5 md:w-5.5 lg:h-[1.6vw] lg:w-[1.6vw] transition-transform duration-300 group-hover:scale-110"
                       strokeWidth={2.2}
                     />
                   </div>
 
                   {/* Title & Subtitle */}
                   <div className="flex flex-col whitespace-nowrap">
-                    <span className="text-[12px] md:text-[13.5px] lg:text-[0.92vw] font-bold tracking-wide text-slate-900 group-hover:text-ink transition-colors leading-tight uppercase">
+                    <span className="text-[11.5px] md:text-[12.5px] lg:text-[0.9vw] font-bold tracking-wide text-slate-900 group-hover:text-ink transition-colors leading-tight uppercase">
                       {item.title}
                     </span>
-                    <span className="text-[10px] md:text-[11.5px] lg:text-[0.76vw] font-medium text-slate-500 leading-tight mt-0.5 lg:mt-[0.2vw]">
+                    <span className="text-[9.5px] md:text-[10.5px] lg:text-[0.74vw] font-medium text-slate-500 leading-tight mt-0.5 lg:mt-[0.2vw]">
                       {item.subtitle}
                     </span>
                   </div>
@@ -403,40 +427,40 @@ export function FeaturesSection({ index = "02" }: Props) {
         {/* Mobile View (< md) */}
         <div className="block md:hidden my-3">
           {/* Mobile Center Graphic */}
-          <div className="relative w-full max-w-[190px] sm:max-w-[220px] h-[115px] sm:h-[130px] mx-auto flex items-center justify-center my-1.5">
+          <div className="relative w-full max-w-[180px] sm:max-w-[210px] h-[110px] sm:h-[125px] mx-auto flex items-center justify-center my-2">
             <Image
               src="/images/features/product-features-pails.webp"
               alt="ASIR Containers Rigid Plastic Packaging"
               fill
-              sizes="240px"
+              sizes="220px"
               priority
               className="object-contain object-center drop-shadow-md"
             />
           </div>
 
-          {/* 8 Features Responsive Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 max-w-2xl mx-auto mt-2">
+          {/* 8 Features Responsive Grid (Ensures all 8 cards & icons are always 100% visible and unclipped) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 max-w-2xl mx-auto mt-3 pb-3">
             {featuresList.map((item) => {
               const IconComponent = item.icon;
               return (
                 <div
                   key={item.id}
-                  className="feature-mobile-card flex items-center gap-2 p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs transition-all hover:border-slate-300 hover:shadow-xs"
+                  className="feature-mobile-card flex items-center gap-2 sm:gap-2.5 p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs transition-all hover:border-slate-300 hover:shadow-xs min-w-0"
                 >
                   <div
                     style={{
                       borderColor: item.color,
                       backgroundColor: item.bgColor,
                     }}
-                    className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border-[1.5px] shrink-0 shadow-2xs"
+                    className="flex h-8.5 w-8.5 sm:h-9.5 sm:w-9.5 items-center justify-center rounded-full border-[1.5px] shrink-0 shadow-2xs"
                   >
                     <IconComponent
                       style={{ color: item.color }}
-                      className="h-4 w-4 sm:h-4.5 sm:w-4.5"
+                      className="h-4 w-4 sm:h-4.5 sm:w-4.5 shrink-0"
                       strokeWidth={2.2}
                     />
                   </div>
-                  <div className="flex flex-col min-w-0">
+                  <div className="flex flex-col min-w-0 flex-1">
                     <span className="text-[11px] sm:text-[12px] font-bold tracking-tight text-slate-900 leading-tight uppercase truncate">
                       {item.title}
                     </span>

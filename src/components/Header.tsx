@@ -37,12 +37,14 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
+  const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
   const [machineriesOpen, setMachineriesOpen] = useState(false);
   const [mobileMachineriesOpen, setMobileMachineriesOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const closeTimer = useRef<number | null>(null);
   const machineriesCloseTimer = useRef<number | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const productsNavRef = useRef<HTMLDivElement | null>(null);
   const machineriesNavRef = useRef<HTMLDivElement | null>(null);
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -54,7 +56,9 @@ export function Header() {
     if (machineriesCloseTimer.current) window.clearTimeout(machineriesCloseTimer.current);
     setOpen(false);
     setProductsOpen(false);
+    setMobileProductsOpen(false);
     setMachineriesOpen(false);
+    setMobileMachineriesOpen(false);
   };
 
   // Instant fast navigation helper ensuring ~0ms transitions without click drops
@@ -92,11 +96,17 @@ export function Header() {
   useEffect(() => {
     setOpen(false);
     setProductsOpen(false);
+    setMobileProductsOpen(false);
     setMachineriesOpen(false);
+    setMobileMachineriesOpen(false);
   }, [pathname]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      setMobileProductsOpen(false);
+      setMobileMachineriesOpen(false);
+      return;
+    }
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (event: KeyboardEvent) => {
@@ -113,13 +123,14 @@ export function Header() {
     if (!productsOpen && !machineriesOpen) return;
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target as Node;
-      // Do not intercept or abort clicks within header navigation
+      // Do not intercept or abort clicks within header navigation or mobile menu
       if (
         headerRef.current?.contains(target) ||
         productsNavRef.current?.contains(target) ||
         modalRef.current?.contains(target) ||
         machineriesNavRef.current?.contains(target) ||
-        machineriesDropdownRef.current?.contains(target)
+        machineriesDropdownRef.current?.contains(target) ||
+        mobileMenuRef.current?.contains(target)
       ) {
         return;
       }
@@ -515,6 +526,7 @@ export function Header() {
       {/* Mobile & Tablet Popup Menu (Floating dialog card, white background, black text, blue hover) */}
       <div
         id="mobile-menu"
+        ref={mobileMenuRef}
         aria-hidden={!open}
         data-lenis-prevent
         className={`fixed z-50 transition-all duration-300 ease-out lg:hidden ${
@@ -557,15 +569,15 @@ export function Header() {
                 </Link>
                 <button
                   type="button"
-                  onClick={() => setProductsOpen((value) => !value)}
-                  aria-expanded={productsOpen}
-                  aria-label={productsOpen ? "Hide products" : "Show products"}
+                  onClick={() => setMobileProductsOpen((value) => !value)}
+                  aria-expanded={mobileProductsOpen}
+                  aria-label={mobileProductsOpen ? "Hide products" : "Show products"}
                   tabIndex={open ? 0 : -1}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors hover:bg-brand/10 hover:text-brand"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition-colors hover:bg-brand/10 hover:text-brand cursor-pointer"
                 >
                   <ChevronDown
                     aria-hidden
-                    className={`h-4 w-4 transition-transform duration-300 ${productsOpen ? "rotate-180 text-brand" : ""}`}
+                    className={`h-4 w-4 transition-transform duration-300 ${mobileProductsOpen ? "rotate-180 text-brand" : ""}`}
                   />
                 </button>
               </div>
@@ -573,7 +585,7 @@ export function Header() {
               {/* Collapsible Mobile Products List */}
               <div
                 className={`grid overflow-hidden transition-[max-height,opacity] duration-300 ${
-                  productsOpen ? "mt-3 max-h-[260px] overflow-y-auto pr-1 opacity-100" : "max-h-0 opacity-0"
+                  mobileProductsOpen ? "mt-3 max-h-[260px] overflow-y-auto pr-1 opacity-100" : "max-h-0 opacity-0"
                 }`}
               >
                 <div className="space-y-1 rounded-xl bg-slate-50 p-2 border border-slate-200/80">
@@ -581,7 +593,7 @@ export function Header() {
                     <Link
                       key={item.slug}
                       href={`/products/${item.slug}`}
-                      tabIndex={open && productsOpen ? 0 : -1}
+                      tabIndex={open && mobileProductsOpen ? 0 : -1}
                       onClick={(e) => navigateTo(`/products/${item.slug}`, e)}
                       className="group flex items-center justify-between rounded-lg px-2.5 py-2 text-[13px] text-slate-700 transition-all hover:bg-white hover:text-brand hover:shadow-xs cursor-pointer"
                     >
