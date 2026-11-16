@@ -1,0 +1,89 @@
+"use client";
+
+import { useRef } from "react";
+import Image from "next/image";
+import { gsap, useGSAP, reduceMotion } from "@/lib/animations";
+
+type ProductMediaProps = {
+  src: string;
+  alt: string;
+  capacity?: string;
+  category?: string;
+  className?: string;
+};
+
+/** Representative detail shots shown beneath the main packshot. */
+const detailShots = [
+  {
+    src: "/images/detail/lid-tind.jpg",
+    alt: "Representative close-up of a lid with a tear-off tamper band",
+    caption: "Closure detail",
+  },
+  {
+    src: "/images/detail/stacked-pails.jpg",
+    alt: "Representative photograph of stacked plastic pails with red lids",
+    caption: "Stacked",
+  },
+] as const;
+
+/**
+ * Product hero image: masked clip reveal on load, gentle parallax on scroll and
+ * a subtle continuous float that stops under reduced-motion.
+ */
+export function ProductMedia({ src, alt, className }: ProductMediaProps) {
+  const root = useRef<HTMLDivElement | null>(null);
+
+  useGSAP(
+    () => {
+      const frame = root.current?.querySelector<HTMLElement>("[data-pm-frame]");
+      const image = root.current?.querySelector<HTMLElement>("[data-pm-image]");
+      if (!frame || !image) return;
+
+      if (reduceMotion()) {
+        gsap.set([frame, image], { opacity: 1, clearProps: "clipPath" });
+        return;
+      }
+
+      const timeline = gsap.timeline({ defaults: { ease: "expo.out" } });
+      timeline
+        .fromTo(frame, { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.15 })
+        .fromTo(image, { scale: 1.16 }, { scale: 1, duration: 1.5 }, 0.1);
+    },
+    { scope: root },
+  );
+
+  return (
+    <div ref={root} className={`relative flex flex-col ${className ?? ""}`}>
+      <div className="group/main relative h-[310px] sm:h-[340px] lg:h-[24vw] lg:shrink-0 overflow-hidden rounded-[20px] lg:rounded-[1.3vw] bg-[#cde2fd] border border-[#b8d6fa]/80 shadow-[inset_0_1px_3px_rgba(255,255,255,0.7),0_8px_24px_rgba(0,35,90,0.06)]">
+        <div data-pm-frame className="absolute inset-0">
+          <div data-pm-image className="relative h-full w-full">
+            <Image
+              src={src}
+              alt={alt}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-contain p-4 sm:p-6 lg:p-[1.5vw] drop-shadow-[0_16px_28px_rgba(0,35,90,0.15)] transition-transform duration-700 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover/main:scale-105"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-2.5 lg:mt-[0.6vw] grid grid-cols-2 gap-2.5 lg:gap-[0.6vw]">
+        {detailShots.map((shot) => (
+          <figure key={shot.src} className="group/shot">
+            <span className="relative block h-[145px] sm:h-[180px] md:h-[210px] lg:h-[11.5vw] overflow-hidden rounded-[14px] lg:rounded-[0.8vw] bg-[#cde2fd]/50 border border-[#b8d6fa]/60">
+              <Image
+                src={shot.src}
+                alt={shot.alt}
+                fill
+                sizes="(max-width: 1024px) 46vw, 24vw"
+                className="ambient-media-slow object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,0.61,0.36,1)] group-hover/shot:scale-108"
+              />
+            </span>
+          </figure>
+        ))}
+      </div>
+    </div>
+  );
+}
