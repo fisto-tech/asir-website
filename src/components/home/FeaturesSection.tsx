@@ -13,7 +13,7 @@ import {
   Utensils,
   type LucideIcon,
 } from "lucide-react";
-import { gsap, useGSAP, reduceMotion } from "@/lib/animations";
+import { gsap, ScrollTrigger, useGSAP, reduceMotion } from "@/lib/animations";
 
 type FeatureItem = {
   id: string;
@@ -176,9 +176,50 @@ export function FeaturesSection({ index = "02" }: Props) {
 
       const mm = gsap.matchMedia();
 
-      // Tablet and Desktop (>= 768px): animate circular orbit
+      // Tablet and Desktop (>= 768px): animate circular orbit + automatic periodic pop-up loop
       mm.add("(min-width: 768px)", () => {
+        // Continuous slow ambient rotation of orbit ring
+        gsap.to(".feature-orbit-ring", {
+          rotation: 360,
+          duration: 60,
+          repeat: -1,
+          ease: "none",
+          transformOrigin: "50% 50%",
+        });
+
+        // Automatic Pop-Up Timeline: Highlights each feature node sequentially for ~2.2s in a continuous loop
+        const autoPopLoop = gsap.timeline({ repeat: -1, delay: 0.6, paused: true });
+
+        featuresList.forEach((item, i) => {
+          const badge = `.feature-badge-${i}`;
+          const text = `.feature-text-${i}`;
+          const icon = `.feature-icon-${i}`;
+
+          autoPopLoop
+            // Pop up node i without shadow
+            .to(badge, {
+              scale: 1.22,
+              duration: 0.45,
+              ease: "back.out(2.2)",
+            })
+            .to(icon, { scale: 1.15, duration: 0.35, ease: "back.out(2)" }, "<")
+            .to(text, { scale: 1.08, duration: 0.35, ease: "power2.out" }, "<")
+            // Hold popped-up state for 2.2 seconds!
+            .to({}, { duration: 2.2 })
+            // Ease back to normal rest state
+            .to(badge, {
+              scale: 1,
+              duration: 0.4,
+              ease: "power2.out",
+            })
+            .to(icon, { scale: 1, duration: 0.35, ease: "power2.out" }, "<")
+            .to(text, { scale: 1, duration: 0.35, ease: "power2.out" }, "<0.05");
+        });
+
         const tl = gsap.timeline({
+          onComplete: () => {
+            autoPopLoop.play();
+          },
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top 80%",
@@ -241,15 +282,59 @@ export function FeaturesSection({ index = "02" }: Props) {
           },
           "-=0.4"
         );
+
+        // Pause auto-pop when cursor hovers over the features, resume on leave
+        const scope = containerRef.current;
+        if (scope) {
+          const onEnter = () => autoPopLoop.pause();
+          const onLeave = () => autoPopLoop.resume();
+          scope.addEventListener("mouseenter", onEnter);
+          scope.addEventListener("mouseleave", onLeave);
+        }
+
+        // Pause when scrolled out of view to preserve resources
+        ScrollTrigger.create({
+          trigger: containerRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          onLeave: () => autoPopLoop.pause(),
+          onEnterBack: () => autoPopLoop.resume(),
+          onLeaveBack: () => autoPopLoop.pause(),
+        });
       });
 
-      // Mobile (< 768px): subtle slide-up entrance without opacity hiding (icons & cards ALWAYS 100% visible)
+      // Mobile (< 768px): subtle slide-up entrance + sequential card pop-up loop
       mm.add("(max-width: 767px)", () => {
+        const mobilePopLoop = gsap.timeline({ repeat: -1, delay: 0.5, paused: true });
+        featuresList.forEach((item, i) => {
+          const card = `.feature-mobile-card-${i}`;
+          const badge = `.feature-mobile-badge-${i}`;
+
+          mobilePopLoop
+            .to(card, {
+              scale: 1.05,
+              borderColor: item.color,
+              duration: 0.4,
+              ease: "back.out(1.8)",
+            })
+            .to(badge, { scale: 1.18, duration: 0.35, ease: "back.out(2)" }, "<")
+            // Hold for 2.2 seconds!
+            .to({}, { duration: 2.2 })
+            .to(card, {
+              scale: 1,
+              borderColor: "rgba(226, 232, 240, 0.9)",
+              duration: 0.35,
+              ease: "power2.out",
+            })
+            .to(badge, { scale: 1, duration: 0.35, ease: "power2.out" }, "<");
+        });
+
         gsap.from(".feature-mobile-card", {
           y: 8,
           duration: 0.35,
           stagger: 0.02,
           ease: "power2.out",
+          onComplete: () => mobilePopLoop.play(),
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top 90%",
@@ -277,11 +362,12 @@ export function FeaturesSection({ index = "02" }: Props) {
     >
       <div className="mx-auto w-full max-w-[1380px] lg:max-w-[92vw] px-4 sm:px-8 lg:px-[4vw] relative z-10">
         
-        {/* Top Header: "Product" in black text, "Features" in brand blue */}
+        {/* Top Header: "Product" in black text, "Features" in brand blue across 2 lines */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shrink-0 pt-2 lg:pt-[0.5vw]">
           <div className="feature-header-left">
             <h2 className="text-[2.2rem] sm:text-[3.2rem] lg:text-[3.3vw] font-extrabold tracking-tight leading-[1.06]">
-              <span className="text-slate-900">Product</span>{" "}
+              <span className="text-slate-900">Product</span>
+              <br />
               <span className="text-[#024182]">Features</span>
             </h2>
           </div>
@@ -366,7 +452,7 @@ export function FeaturesSection({ index = "02" }: Props) {
             </div>
 
             {/* 8 Feature Nodes Aligned in a PROPER CIRCLE with Outward-Radiating Labels */}
-            {featuresList.map((item) => {
+            {featuresList.map((item, index) => {
               const IconComponent = item.icon;
               const isLeft = item.align === "left";
               const isTop = item.align === "top";
@@ -379,7 +465,7 @@ export function FeaturesSection({ index = "02" }: Props) {
                     left: item.pos.left,
                     top: item.pos.top,
                   }}
-                  className={`feature-node absolute ${item.posClass ?? "-translate-y-1/2"} flex ${
+                  className={`feature-node feature-node-${index} absolute ${item.posClass ?? "-translate-y-1/2"} flex ${
                     isLeft
                       ? "flex-row-reverse text-right"
                       : isTop
@@ -393,23 +479,26 @@ export function FeaturesSection({ index = "02" }: Props) {
                       : "items-center gap-2.5 md:gap-3 lg:gap-[0.75vw]"
                   } group cursor-default z-20`}
                 >
-                  {/* Circular Icon Badge with refined border and soft background color */}
-                  <div
-                    style={{
-                      borderColor: item.color,
-                      backgroundColor: item.bgColor,
-                    }}
-                    className="relative flex h-10 w-10 md:h-11 md:w-11 lg:h-[3.2vw] lg:w-[3.2vw] items-center justify-center rounded-full border-[1.5px] shadow-[0_4px_12px_rgba(0,0,0,0.06)] transition-all duration-300 ease-out group-hover:scale-110 group-hover:shadow-[0_6px_18px_rgba(0,0,0,0.12)] shrink-0"
-                  >
-                    <IconComponent
-                      style={{ color: item.color }}
-                      className="h-5 w-5 md:h-5.5 md:w-5.5 lg:h-[1.6vw] lg:w-[1.6vw] transition-transform duration-300 group-hover:scale-110"
-                      strokeWidth={2.2}
-                    />
+                  {/* Outer container to anchor badge */}
+                  <div className="relative shrink-0 flex items-center justify-center">
+                    {/* Circular Icon Badge with refined border and soft background color (No shadows) */}
+                    <div
+                      style={{
+                        borderColor: item.color,
+                        backgroundColor: item.bgColor,
+                      }}
+                      className={`feature-badge-${index} relative flex h-10 w-10 md:h-11 md:w-11 lg:h-[3.2vw] lg:w-[3.2vw] items-center justify-center rounded-full border-[1.5px] transition-all duration-300 ease-out group-hover:scale-115 shrink-0`}
+                    >
+                      <IconComponent
+                        style={{ color: item.color }}
+                        className={`feature-icon-${index} h-5 w-5 md:h-5.5 md:w-5.5 lg:h-[1.6vw] lg:w-[1.6vw] transition-transform duration-300 group-hover:scale-110`}
+                        strokeWidth={2.2}
+                      />
+                    </div>
                   </div>
 
                   {/* Title & Subtitle */}
-                  <div className="flex flex-col whitespace-nowrap">
+                  <div className={`feature-text-${index} flex flex-col whitespace-nowrap origin-${isLeft ? "right" : isTop || isBottom ? "center" : "left"}`}>
                     <span className="text-[11.5px] md:text-[12.5px] lg:text-[0.9vw] font-bold tracking-wide text-slate-900 group-hover:text-ink transition-colors leading-tight uppercase">
                       {item.title}
                     </span>
@@ -440,19 +529,19 @@ export function FeaturesSection({ index = "02" }: Props) {
 
           {/* 8 Features Responsive Grid (Ensures all 8 cards & icons are always 100% visible and unclipped) */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 max-w-2xl mx-auto mt-3 pb-3">
-            {featuresList.map((item) => {
+            {featuresList.map((item, index) => {
               const IconComponent = item.icon;
               return (
                 <div
                   key={item.id}
-                  className="feature-mobile-card flex items-center gap-2 sm:gap-2.5 p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs transition-all hover:border-slate-300 hover:shadow-xs min-w-0"
+                  className={`feature-mobile-card feature-mobile-card-${index} flex items-center gap-2 sm:gap-2.5 p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 transition-all hover:border-slate-300 min-w-0`}
                 >
                   <div
                     style={{
                       borderColor: item.color,
                       backgroundColor: item.bgColor,
                     }}
-                    className="flex h-8.5 w-8.5 sm:h-9.5 sm:w-9.5 items-center justify-center rounded-full border-[1.5px] shrink-0 shadow-2xs"
+                    className={`feature-mobile-badge-${index} flex h-8.5 w-8.5 sm:h-9.5 sm:w-9.5 items-center justify-center rounded-full border-[1.5px] shrink-0 transition-transform duration-300`}
                   >
                     <IconComponent
                       style={{ color: item.color }}

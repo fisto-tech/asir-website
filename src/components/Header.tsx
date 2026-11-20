@@ -342,12 +342,12 @@ export function Header() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
-                              <span className="font-display text-[14.5px] lg:text-[0.98vw] font-bold text-slate-900 group-hover:text-[#0066cc] transition-colors">
+                              <span className="font-display text-[12.5px] lg:text-[0.84vw] font-bold text-slate-900 group-hover:text-[#0066cc] transition-colors">
                                 Production machineries
                               </span>
-                              <ChevronRight className="h-3.5 w-3.5 lg:h-[0.9vw] lg:w-[0.9vw] text-slate-400 group-hover:text-[#0066cc] group-hover:translate-x-0.5 transition-all" />
+                              <ChevronRight className="h-3 w-3 lg:h-[0.78vw] lg:w-[0.78vw] text-slate-400 group-hover:text-[#0066cc] group-hover:translate-x-0.5 transition-all" />
                             </div>
-                            <p className="text-[12px] lg:text-[0.8vw] text-slate-500 mt-0.5 leading-snug">
+                            <p className="text-[11px] lg:text-[0.72vw] text-slate-500 mt-0.5 leading-snug">
                               Screen Printing, HTL, Inmould labeling
                             </p>
                           </div>
@@ -365,12 +365,12 @@ export function Header() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
-                              <span className="font-display text-[14.5px] lg:text-[0.98vw] font-bold text-slate-900 group-hover:text-[#0066cc] transition-colors">
+                              <span className="font-display text-[12.5px] lg:text-[0.84vw] font-bold text-slate-900 group-hover:text-[#0066cc] transition-colors">
                                 Auxiliaries
                               </span>
-                              <ChevronRight className="h-3.5 w-3.5 lg:h-[0.9vw] lg:w-[0.9vw] text-slate-400 group-hover:text-[#0066cc] group-hover:translate-x-0.5 transition-all" />
+                              <ChevronRight className="h-3 w-3 lg:h-[0.78vw] lg:w-[0.78vw] text-slate-400 group-hover:text-[#0066cc] group-hover:translate-x-0.5 transition-all" />
                             </div>
-                            <p className="text-[12px] lg:text-[0.8vw] text-slate-500 mt-0.5 leading-snug">
+                            <p className="text-[11px] lg:text-[0.72vw] text-slate-500 mt-0.5 leading-snug">
                               Chiller 1, Chiller 2 & plant systems
                             </p>
                           </div>
@@ -480,10 +480,10 @@ export function Header() {
                   key={item.slug}
                   href={`/products/${item.slug}`}
                   onClick={(e) => navigateTo(`/products/${item.slug}`, e)}
-                  className="group relative flex h-[62px] lg:h-[4.2vw] items-center justify-between rounded-2xl lg:rounded-[1vw] border border-slate-200/70 bg-white px-3 lg:px-[0.8vw] py-2 lg:py-[0.5vw] transition-all duration-200 hover:border-brand hover:bg-brand hover:shadow-md cursor-pointer"
+                  className="group relative flex h-[62px] lg:h-[4.2vw] items-center justify-between rounded-2xl lg:rounded-[1vw] border-[1.5px] border-slate-200 hover:border-brand bg-white hover:bg-brand/[0.04] px-3 lg:px-[0.8vw] py-2 lg:py-[0.5vw] transition-all duration-200 hover:shadow-xs cursor-pointer"
                 >
                   <div className="flex items-center gap-3 lg:gap-[0.7vw] min-w-0 pr-1">
-                    <div className="relative flex h-11 w-11 lg:h-[3vw] lg:w-[3vw] shrink-0 items-center justify-center rounded-xl lg:rounded-[0.7vw] bg-slate-50 transition-colors duration-200 group-hover:bg-white/20">
+                    <div className="relative flex h-11 w-11 lg:h-[3vw] lg:w-[3vw] shrink-0 items-center justify-center rounded-xl lg:rounded-[0.7vw] bg-slate-50 transition-all duration-200 group-hover:bg-blue-50/80">
                       <Image
                         src={item.img}
                         alt={item.title}
@@ -495,17 +495,17 @@ export function Header() {
                     </div>
 
                     <div className="flex flex-col min-w-0">
-                      <span className="font-display text-[13.5px] lg:text-[0.92vw] font-bold leading-tight text-slate-900 group-hover:text-white transition-colors duration-200 truncate">
+                      <span className="font-display text-[12.5px] lg:text-[0.84vw] font-bold leading-tight text-slate-900 group-hover:text-brand transition-colors duration-200 truncate">
                         {item.title}
                       </span>
-                      <span className="text-[11.5px] lg:text-[0.76vw] font-normal text-slate-400 group-hover:text-white/80 transition-colors duration-200 mt-0.5">
+                      <span className="text-[11px] lg:text-[0.72vw] font-normal text-slate-400 group-hover:text-slate-600 transition-colors duration-200 mt-0.5">
                         Code : {item.code}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex h-7 w-7 lg:h-[1.9vw] lg:w-[1.9vw] shrink-0 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-all duration-200 group-hover:bg-white group-hover:text-brand group-hover:translate-x-0.5">
-                    <ChevronRight className="h-3.5 w-3.5 lg:h-[0.9vw] lg:w-[0.9vw] stroke-[2.5]" />
+                  <div className="flex h-7 w-7 lg:h-[1.9vw] lg:w-[1.9vw] shrink-0 items-center justify-center rounded-full border-[1.5px] border-slate-200 bg-slate-50 text-slate-400 transition-all duration-200 group-hover:border-brand group-hover:bg-brand group-hover:text-white group-hover:translate-x-0.5">
+                    <ChevronRight className="h-3 w-3 lg:h-[0.78vw] lg:w-[0.78vw] stroke-[2.5]" />
                   </div>
                 </Link>
               ))}

@@ -7,6 +7,7 @@ import { ProductMedia } from "@/components/products/ProductMedia";
 import { ProductCard } from "@/components/products/ProductCard";
 import { ProductApplicationsShowcase } from "@/components/products/ProductApplicationsShowcase";
 import { ProductQualityInspection } from "@/components/products/ProductQualityInspection";
+import { ColorCTA } from "@/components/sections/ColorCTA";
 import { Reveal } from "@/components/motion/Reveal";
 import { AnimatedIcon, applicationIcons, type IconMotion } from "@/components/ui/AnimatedIcon";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -292,54 +293,25 @@ export default async function ProductPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* Enquiry band — matches homepage ContactCTA design */}
-      <section className="bg-white pt-1 pb-6 sm:pb-8 lg:pb-[2.5vw]">
-        <div className="shell max-w-[1440px] lg:max-w-[92vw] px-5 sm:px-8 lg:px-[4vw]">
-          <div className="relative overflow-hidden rounded-[24px] lg:rounded-[1.6vw] bg-charcoal shadow-xl">
-            {/* Backdrop with plant photograph */}
-            <div className="absolute inset-0">
-              <Image
-                src="/images/facility/dispatch.jpg"
-                alt="Dispatch bay and factory floor packaging line"
-                fill
-                sizes="100vw"
-                className="object-cover opacity-60"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-charcoal/95 via-charcoal/80 to-charcoal/40" />
-            </div>
-
-            <div className="relative z-10 flex flex-col justify-between gap-6 px-7 py-8 sm:px-10 sm:py-10 lg:flex-row lg:items-center lg:px-[3vw] lg:py-[2.6vw]">
-              <div className="max-w-xl lg:max-w-[36vw]">
-                <SectionLabel tone="light">
-                  Next Step
-                </SectionLabel>
-
-                <h2 className="text-2xl sm:text-3xl lg:text-[2vw] font-display font-semibold text-white mt-2.5 lg:mt-[0.6vw]">
-                  Need this container in a specific colour or closure?
-                </h2>
-
-                <p className="mt-2.5 lg:mt-[0.6vw] max-w-lg lg:max-w-[32vw] text-[14.5px] lg:text-[1vw] leading-relaxed text-white/80">
-                  Send us the code ({codesFor(product).join(" or ")}), required colours and batch volume. We will confirm lead times and mould allocation directly.
-                </p>
-              </div>
-
-              {/* Clean Enquiry Action */}
-              <div className="shrink-0">
-                <Link
-                  href={`/contact?product=${product.slug}`}
-                  className="group inline-flex h-12 lg:h-[3vw] items-center justify-center gap-2.5 lg:gap-[0.6vw] rounded-full bg-brand px-7 lg:px-[1.8vw] text-[14.5px] lg:text-[0.95vw] font-semibold text-white shadow-lg shadow-brand/25 transition-all duration-300 hover:bg-brand-dark hover:shadow-xl hover:shadow-brand/35 hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  Start an enquiry
-                  <ArrowRight
-                    aria-hidden
-                    className="h-4 w-4 lg:h-[1vw] lg:w-[1vw] transition-transform duration-300 group-hover:translate-x-1"
-                  />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Enquiry banner — unified ColorCTA matching all site banners */}
+      <ColorCTA
+        eyebrow="Next Step"
+        heading="Need this container in a specific colour or closure?"
+        body={
+          <>
+            <span className="sm:block">
+              Send us the code ({codesFor(product).join(" or ")}), required colours and batch volume. We will confirm lead times and{" "}
+            </span>
+            <span className="sm:block">
+              mould allocation directly.
+            </span>
+          </>
+        }
+        ctaLabel="Start an enquiry"
+        ctaHref={`/contact?product=${product.slug}`}
+        image="/images/facility/dispatch.jpg"
+        imageAlt="Dispatch bay and warehouse storage racks"
+      />
 
       <script
         type="application/ld+json"

@@ -575,8 +575,8 @@ export function OurCapabilities() {
               {/* 3. How Does It Work (Process Steps) */}
               <div className="mt-10 sm:mt-12 pt-8 sm:pt-10 border-t border-slate-200/70">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="h-[2px] w-5 bg-brand" />
-                  <h4 className="font-display text-[18px] sm:text-[20px] font-bold text-ink tracking-tight">
+                  <span className="h-[2px] w-5 bg-[#194e9e]" />
+                  <h4 className="font-display text-[18px] sm:text-[20px] font-bold text-[#194e9e] tracking-tight">
                     {activeCapability.stepsHeading}
                   </h4>
                 </div>
@@ -604,8 +604,8 @@ export function OurCapabilities() {
               {/* 4. Key Highlights & Advantages */}
               <div className="mt-10 sm:mt-12 pt-8 sm:pt-10 border-t border-slate-200/70">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="h-[2px] w-5 bg-brand" />
-                  <h4 className="font-display text-[18px] sm:text-[20px] font-bold text-ink tracking-tight">
+                  <span className="h-[2px] w-5 bg-[#194e9e]" />
+                  <h4 className="font-display text-[18px] sm:text-[20px] font-bold text-[#194e9e] tracking-tight">
                     {activeCapability.benefitsHeading}
                   </h4>
                 </div>
@@ -639,8 +639,8 @@ export function OurCapabilities() {
               {activeCapability.comparisonTable && (
                 <div className="mt-10 sm:mt-12 pt-8 sm:pt-10 border-t border-slate-200/70">
                   <div className="flex items-center gap-2 mb-4">
-                    <span className="h-[2px] w-5 bg-brand" />
-                    <h4 className="font-display text-[18px] sm:text-[20px] font-bold text-ink tracking-tight">
+                    <span className="h-[2px] w-5 bg-[#194e9e]" />
+                    <h4 className="font-display text-[18px] sm:text-[20px] font-bold text-[#194e9e] tracking-tight">
                       IML vs Traditional Labelling
                     </h4>
                   </div>
@@ -673,8 +673,8 @@ export function OurCapabilities() {
               {/* 6. Typical Applications Checklist */}
               <div className="mt-10 sm:mt-12 pt-8 sm:pt-10 border-t border-slate-200/70">
                 <div className="flex items-center gap-2 mb-3.5">
-                  <span className="h-[2px] w-5 bg-brand" />
-                  <h4 className="font-display text-[17px] sm:text-[18.5px] font-bold text-ink tracking-tight">
+                  <span className="h-[2px] w-5 bg-[#194e9e]" />
+                  <h4 className="font-display text-[17px] sm:text-[18.5px] font-bold text-[#194e9e] tracking-tight">
                     Typical Packaging Applications
                   </h4>
                 </div>
@@ -697,8 +697,8 @@ export function OurCapabilities() {
                 <div className="mt-10 sm:mt-12 pt-8 sm:pt-10 border-t border-slate-200/70">
                   <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="h-[2px] w-5 bg-brand" />
-                      <h4 className="font-display text-[16.5px] sm:text-[18px] font-bold text-ink tracking-tight">
+                      <span className="h-[2px] w-5 bg-[#194e9e]" />
+                      <h4 className="font-display text-[16.5px] sm:text-[18px] font-bold text-[#194e9e] tracking-tight">
                         Trusted by Leading Brands for {activeCapability.tabLabel}
                       </h4>
                     </div>

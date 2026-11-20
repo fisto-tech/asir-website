@@ -60,11 +60,11 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 $smtpConfig = [
     'host'       => getenv('SMTP_HOST') ?: 'smtp.gmail.com',
     'port'       => (int)(getenv('SMTP_PORT') ?: 587), // 587 (TLS) or 465 (SSL)
-    'username'   => getenv('SMTP_USER') ?: 'sales@asircontainers.com',
+    'username'   => getenv('SMTP_USER') ?: 'fistotech01@gmail.com',
     'password'   => getenv('SMTP_PASS') ?: '', // Google App Password (16 chars, e.g. "abcd efgh ijkl mnop")
-    'from_email' => getenv('SMTP_FROM') ?: 'sales@asircontainers.com',
+    'from_email' => getenv('SMTP_FROM') ?: 'fistotech01@gmail.com',
     'from_name'  => 'ASIR Containers Website',
-    'to_email'   => getenv('NOTIFICATION_EMAIL') ?: 'sales@asircontainers.com',
+    'to_email'   => getenv('NOTIFICATION_EMAIL') ?: 'fistotech01@gmail.com',
 ];
 
 $subject = "[New Enquiry] " . ($product ? "{$product} - " : "") . "{$enquiryType} from {$company} ({$name})";

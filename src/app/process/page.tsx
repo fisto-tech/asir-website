@@ -27,7 +27,16 @@ export default function ProcessPage() {
       <ColorCTA
         eyebrow="Quality Assurance & Custom Runs"
         heading="Looking for process validation or custom batches?"
-        body="Review batch inspection criteria, in-process quality checklists, and decorative finishes with our technical engineers."
+        body={
+          <>
+            <span className="sm:block">
+              Review batch inspection criteria, in-process quality checklists,{" "}
+            </span>
+            <span className="sm:block">
+              and decorative finishes with our technical engineers.
+            </span>
+          </>
+        }
         ctaLabel="Contact engineering"
         image="/images/facility/dispatch.jpg"
         imageAlt="Pallets of finished containers at the dispatch bay"

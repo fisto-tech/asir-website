@@ -91,7 +91,7 @@ export function ManufacturingSection() {
               >
                 <span className="block text-slate-900">Where Design</span>
                 <span className="block text-slate-900">
-                  Meets <span className="text-[#0066cc]">Manufacturing</span>
+                  Meets <span className="text-[#194e9e]">Manufacturing</span>
                 </span>
               </h2>
 

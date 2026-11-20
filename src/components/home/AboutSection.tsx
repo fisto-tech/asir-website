@@ -86,30 +86,30 @@ export function AboutSection() {
               {/* 3 Centered Icon Blocks Matching Reference Image */}
               <div className="mt-8 sm:mt-10 lg:mt-[2vw] flex flex-wrap items-start justify-start gap-7 sm:gap-10 lg:gap-[2.2vw]">
                 
-                {/* 1. Precision Engineering */}
+                {/* 1. Precision Engineering - #0c7991 (Deep Teal) */}
                 <div data-reveal data-reveal-dir="scale" data-reveal-delay="0.22" className="flex flex-col items-center text-center">
-                  <div className="flex h-[58px] w-[58px] sm:h-[64px] sm:w-[64px] lg:h-[3.9vw] lg:w-[3.9vw] items-center justify-center rounded-[18px] sm:rounded-[20px] lg:rounded-[1.1vw] bg-gradient-to-b from-[#0066ff] to-[#0052cc] shadow-[0_8px_18px_rgba(0,102,255,0.30)] transition-all duration-300 hover:scale-105 hover:shadow-[0_12px_24px_rgba(0,102,255,0.40)]">
-                    <Icon icon="fa6-solid:gear" className="h-7 w-7 sm:h-[30px] sm:w-[30px] lg:h-[1.85vw] lg:w-[1.85vw] text-white drop-shadow-xs" />
+                  <div className="flex h-[58px] w-[58px] sm:h-[64px] sm:w-[64px] lg:h-[3.9vw] lg:w-[3.9vw] items-center justify-center rounded-[18px] sm:rounded-[20px] lg:rounded-[1.1vw] bg-[#0c7991] transition-all duration-300 hover:scale-105">
+                    <Icon icon="fa6-solid:gear" className="h-7 w-7 sm:h-[30px] sm:w-[30px] lg:h-[1.85vw] lg:w-[1.85vw] text-white" />
                   </div>
                   <p className="mt-2.5 lg:mt-[0.6vw] max-w-[85px] sm:max-w-[95px] lg:max-w-[6.2vw] font-display text-[12.5px] sm:text-[13.5px] lg:text-[0.88vw] font-semibold text-slate-900 leading-[1.25]">
                     Precision Engineering
                   </p>
                 </div>
 
-                {/* 2. Trusted Protection */}
+                {/* 2. Trusted Protection - #67686b (Charcoal Slate) */}
                 <div data-reveal data-reveal-dir="scale" data-reveal-delay="0.3" className="flex flex-col items-center text-center">
-                  <div className="flex h-[58px] w-[58px] sm:h-[64px] sm:w-[64px] lg:h-[3.9vw] lg:w-[3.9vw] items-center justify-center rounded-[18px] sm:rounded-[20px] lg:rounded-[1.1vw] bg-gradient-to-b from-[#0066ff] to-[#0052cc] shadow-[0_8px_18px_rgba(0,102,255,0.30)] transition-all duration-300 hover:scale-105 hover:shadow-[0_12px_24px_rgba(0,102,255,0.40)]">
-                    <Icon icon="fluent:shield-task-24-filled" className="h-7 w-7 sm:h-[30px] sm:w-[30px] lg:h-[1.85vw] lg:w-[1.85vw] text-white drop-shadow-xs" />
+                  <div className="flex h-[58px] w-[58px] sm:h-[64px] sm:w-[64px] lg:h-[3.9vw] lg:w-[3.9vw] items-center justify-center rounded-[18px] sm:rounded-[20px] lg:rounded-[1.1vw] bg-[#67686b] transition-all duration-300 hover:scale-105">
+                    <Icon icon="fluent:shield-task-24-filled" className="h-7 w-7 sm:h-[30px] sm:w-[30px] lg:h-[1.85vw] lg:w-[1.85vw] text-white" />
                   </div>
                   <p className="mt-2.5 lg:mt-[0.6vw] max-w-[85px] sm:max-w-[95px] lg:max-w-[6.2vw] font-display text-[12.5px] sm:text-[13.5px] lg:text-[0.88vw] font-semibold text-slate-900 leading-[1.25]">
                     Trusted Protection
                   </p>
                 </div>
 
-                {/* 3. Built for Your Brand */}
+                {/* 3. Built for Your Brand - #67751b (Olive Moss) */}
                 <div data-reveal data-reveal-dir="scale" data-reveal-delay="0.38" className="flex flex-col items-center text-center">
-                  <div className="flex h-[58px] w-[58px] sm:h-[64px] sm:w-[64px] lg:h-[3.9vw] lg:w-[3.9vw] items-center justify-center rounded-[18px] sm:rounded-[20px] lg:rounded-[1.1vw] bg-gradient-to-b from-[#0066ff] to-[#0052cc] shadow-[0_8px_18px_rgba(0,102,255,0.30)] transition-all duration-300 hover:scale-105 hover:shadow-[0_12px_24px_rgba(0,102,255,0.40)]">
-                    <Icon icon="fluent:people-community-24-filled" className="h-7 w-7 sm:h-[30px] sm:w-[30px] lg:h-[1.85vw] lg:w-[1.85vw] text-white drop-shadow-xs" />
+                  <div className="flex h-[58px] w-[58px] sm:h-[64px] sm:w-[64px] lg:h-[3.9vw] lg:w-[3.9vw] items-center justify-center rounded-[18px] sm:rounded-[20px] lg:rounded-[1.1vw] bg-[#67751b] transition-all duration-300 hover:scale-105">
+                    <Icon icon="fluent:people-community-24-filled" className="h-7 w-7 sm:h-[30px] sm:w-[30px] lg:h-[1.85vw] lg:w-[1.85vw] text-white" />
                   </div>
                   <p className="mt-2.5 lg:mt-[0.6vw] max-w-[85px] sm:max-w-[95px] lg:max-w-[6.2vw] font-display text-[12.5px] sm:text-[13.5px] lg:text-[0.88vw] font-semibold text-slate-900 leading-[1.25]">
                     Built for Your Brand

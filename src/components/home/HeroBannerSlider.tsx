@@ -14,8 +14,7 @@ interface BannerSlide {
   eyebrow: string;
   eyebrowHighlight: string;
   highlightClass: string;
-  titleLine1: string;
-  titleLine2: string;
+  titleLines: string[];
   description: string;
   ctaText: string;
   ctaLink: string;
@@ -30,8 +29,12 @@ const bannerSlides: BannerSlide[] = [
     eyebrow: "Your Trusted Partner for",
     eyebrowHighlight: "Quality Container Solutions",
     highlightClass: "text-[#f59e0b]", // Amber / Warm Gold
-    titleLine1: "Premium Packaging for",
-    titleLine2: "Paints & Coatings",
+    titleLines: [
+      "Premium",
+      "Packaging",
+      "for Paints &",
+      "Coatings",
+    ],
     description:
       "Durable, spill-resistant, and high-impact white polypropylene pails engineered for decorative emulsions, primers, and industrial coatings.",
     ctaText: "Explore More....",
@@ -45,8 +48,12 @@ const bannerSlides: BannerSlide[] = [
     eyebrow: "Your Trusted Partner for",
     eyebrowHighlight: "Quality Container Solutions",
     highlightClass: "text-[#4ade80]", // Fresh Agro Green
-    titleLine1: "Heavy-Duty Packaging",
-    titleLine2: "for Agro & Chemicals",
+    titleLines: [
+      "Heavy-Duty",
+      "Packaging",
+      "for Agro &",
+      "Chemicals",
+    ],
     description:
       "Chemically-resistant, virgin-grade containers built to safely store and transport fertilizers, crop protection liquids, and micronutrients.",
     ctaText: "Explore More....",
@@ -60,8 +67,12 @@ const bannerSlides: BannerSlide[] = [
     eyebrow: "Your Trusted Partner for",
     eyebrowHighlight: "Quality Container Solutions",
     highlightClass: "text-[#fbbf24]", // Golden Amber
-    titleLine1: "Hygienic & Certified",
-    titleLine2: "Food-Grade Packaging",
+    titleLines: [
+      "Hygienic &",
+      "Certified",
+      "Food-Grade",
+      "Packaging",
+    ],
     description:
       "100% virgin, non-toxic, and airtight containers designed to preserve freshness for dairy, edible oils, honey, confectionery, and bulk ingredients.",
     ctaText: "Explore More....",
@@ -75,8 +86,12 @@ const bannerSlides: BannerSlide[] = [
     eyebrow: "Your Trusted Partner for",
     eyebrowHighlight: "Quality Container Solutions",
     highlightClass: "text-[#4ade80]", // High-vis Green/Yellow
-    titleLine1: "Industrial-Grade",
-    titleLine2: "Packaging for Lubricants",
+    titleLines: [
+      "Industrial-Grade",
+      "Packaging",
+      "for Oils &",
+      "Lubricants",
+    ],
     description:
       "High-durability, drop-tested pails engineered for automotive greases, gear oils, engine lubricants, and heavy-duty industrial fluids.",
     ctaText: "Explore More....",
@@ -89,6 +104,7 @@ export function HeroBannerSlider() {
   const [isPaused, setIsPaused] = useState(false);
   const rootRef = useRef<HTMLElement | null>(null);
   const textContainerRef = useRef<HTMLDivElement | null>(null);
+  const textSlideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const bgRefs = useRef<(HTMLDivElement | null)[]>([]);
   const productRefs = useRef<(HTMLDivElement | null)[]>([]);
   const prevIndexRef = useRef<number>(0);
@@ -134,10 +150,12 @@ export function HeroBannerSlider() {
             p.style.transform = "none";
           }
         });
-        if (textContainerRef.current) {
-          textContainerRef.current.style.opacity = "1";
-          textContainerRef.current.style.transform = "none";
-        }
+        textSlideRefs.current.forEach((t, idx) => {
+          if (t) {
+            t.style.opacity = idx === currentIndex ? "1" : "0";
+            t.style.transform = "none";
+          }
+        });
         return;
       }
 
@@ -145,8 +163,7 @@ export function HeroBannerSlider() {
       const isInitial = isFirstRender.current;
       isFirstRender.current = false;
 
-      // 1. Silky Smooth Background Crossfade with cinematic subtle zoom
-      // 2. Silky Smooth Product Image Crossfade (Each Product Displays 5s)
+      // 1. Initial State on First Mount
       if (isInitial) {
         bgRefs.current.forEach((bg, idx) => {
           if (!bg) return;
@@ -156,18 +173,29 @@ export function HeroBannerSlider() {
           if (!p) return;
           gsap.set(p, { opacity: idx === currentIndex ? 1 : 0, x: 0, scale: 1, zIndex: idx === currentIndex ? 2 : 0 });
         });
+        textSlideRefs.current.forEach((t, idx) => {
+          if (!t) return;
+          gsap.set(t, {
+            opacity: idx === currentIndex ? 1 : 0,
+            y: 0,
+            zIndex: idx === currentIndex ? 2 : 0,
+          });
+        });
       } else {
         const outgoingBg = bgRefs.current[prevIdx];
         const incomingBg = bgRefs.current[currentIndex];
         const outgoingProduct = productRefs.current[prevIdx];
         const incomingProduct = productRefs.current[currentIndex];
+        const outgoingText = textSlideRefs.current[prevIdx];
+        const incomingText = textSlideRefs.current[currentIndex];
 
-        // Background transition
+        // 1. Background transition with tween cancellation to prevent race conditions
         if (outgoingBg && prevIdx !== currentIndex) {
+          gsap.killTweensOf(outgoingBg);
           gsap.set(outgoingBg, { zIndex: 1 });
           gsap.to(outgoingBg, {
             opacity: 0,
-            duration: 1.0,
+            duration: 0.85,
             ease: "power2.inOut",
             onComplete: () => {
               gsap.set(outgoingBg, { zIndex: 0 });
@@ -176,90 +204,109 @@ export function HeroBannerSlider() {
         }
 
         if (incomingBg) {
+          gsap.killTweensOf(incomingBg);
           gsap.set(incomingBg, { zIndex: 2 });
           gsap.fromTo(
             incomingBg,
-            { opacity: 0, scale: 1.035 },
+            { opacity: 0, scale: 1.03 },
             {
               opacity: 1,
               scale: 1,
-              duration: 1.1,
+              duration: 0.95,
               ease: "power2.out",
             }
           );
         }
 
-        // Product image crossfade & entrance:
+        // 2. Product image transition (only crossfade if different image asset)
         const isSameProduct =
           bannerSlides[prevIdx]?.productImage ===
           bannerSlides[currentIndex]?.productImage;
 
-        // Outgoing product fades out gracefully
-        if (outgoingProduct && prevIdx !== currentIndex) {
-          gsap.set(outgoingProduct, { zIndex: 1 });
-          gsap.to(outgoingProduct, {
+        if (!isSameProduct) {
+          if (outgoingProduct && prevIdx !== currentIndex) {
+            gsap.killTweensOf(outgoingProduct);
+            gsap.set(outgoingProduct, { zIndex: 1 });
+            gsap.to(outgoingProduct, {
+              opacity: 0,
+              x: -24,
+              scale: 0.96,
+              duration: 0.85,
+              ease: "power2.inOut",
+              onComplete: () => {
+                gsap.set(outgoingProduct, { zIndex: 0, x: 0, scale: 1 });
+              },
+            });
+          }
+
+          if (incomingProduct) {
+            gsap.killTweensOf(incomingProduct);
+            gsap.set(incomingProduct, { zIndex: 2 });
+            gsap.fromTo(
+              incomingProduct,
+              { opacity: 0, x: 28, scale: 0.96 },
+              {
+                opacity: 1,
+                x: 0,
+                scale: 1,
+                duration: 0.95,
+                ease: "power2.out",
+                clearProps: "transform",
+              }
+            );
+          }
+        } else {
+          // If identical product image, keep it steadily visible without jitter
+          if (incomingProduct) {
+            gsap.killTweensOf(incomingProduct);
+            gsap.set(incomingProduct, { opacity: 1, zIndex: 2, x: 0, y: 0, scale: 1 });
+          }
+          if (outgoingProduct && outgoingProduct !== incomingProduct) {
+            gsap.killTweensOf(outgoingProduct);
+            gsap.set(outgoingProduct, { opacity: 0, zIndex: 0 });
+          }
+        }
+
+        // 3. Silky Smooth Text Transition (Fade out previous, slide in incoming)
+        if (outgoingText && prevIdx !== currentIndex) {
+          gsap.killTweensOf(outgoingText);
+          gsap.set(outgoingText, { zIndex: 1 });
+          gsap.to(outgoingText, {
             opacity: 0,
-            x: isSameProduct ? 0 : -24,
-            scale: isSameProduct ? 1 : 0.96,
-            duration: 0.9,
-            ease: "power2.inOut",
+            y: -12,
+            duration: 0.35,
+            ease: "power2.in",
             onComplete: () => {
-              gsap.set(outgoingProduct, { zIndex: 0, x: 0, scale: 1 });
+              gsap.set(outgoingText, { zIndex: 0 });
             },
           });
         }
 
-        // Incoming product smoothly settles in
-        if (incomingProduct) {
-          gsap.set(incomingProduct, { zIndex: 2 });
+        if (incomingText) {
+          gsap.killTweensOf(incomingText);
+          gsap.set(incomingText, { zIndex: 2 });
           gsap.fromTo(
-            incomingProduct,
-            {
-              opacity: 0,
-              x: isSameProduct ? 0 : 30,
-              scale: isSameProduct ? 0.99 : 0.95,
-              y: isSameProduct ? 6 : 0,
-            },
-            {
-              opacity: 1,
-              x: 0,
-              scale: 1,
-              y: 0,
-              duration: 1.05,
-              ease: "power2.out",
-              clearProps: "transform",
-            }
-          );
-        }
-
-        // Ensure any other inactive elements stay hidden
-        bgRefs.current.forEach((bg, idx) => {
-          if (!bg || idx === currentIndex || idx === prevIdx) return;
-          gsap.set(bg, { opacity: 0, zIndex: 0 });
-        });
-        productRefs.current.forEach((p, idx) => {
-          if (!p || idx === currentIndex || idx === prevIdx) return;
-          gsap.set(p, { opacity: 0, zIndex: 0 });
-        });
-      }
-
-      // 3. Staggered Text Entrance Animation
-      if (textContainerRef.current) {
-        const items = textContainerRef.current.querySelectorAll<HTMLElement>("[data-text-anim]");
-        if (items.length > 0) {
-          gsap.fromTo(
-            items,
-            { opacity: 0, y: 22 },
+            incomingText,
+            { opacity: 0, y: 16 },
             {
               opacity: 1,
               y: 0,
-              duration: 0.75,
-              stagger: 0.08,
+              duration: 0.65,
               ease: "power3.out",
               clearProps: "transform",
             }
           );
         }
+
+        // Clean up any remaining inactive slides
+        bgRefs.current.forEach((bg, idx) => {
+          if (!bg || idx === currentIndex || idx === prevIdx) return;
+          gsap.set(bg, { opacity: 0, zIndex: 0 });
+        });
+        textSlideRefs.current.forEach((t, idx) => {
+          if (!t || idx === currentIndex || idx === prevIdx) return;
+          gsap.set(t, { opacity: 0, zIndex: 0 });
+        });
       }
 
       prevIndexRef.current = currentIndex;
@@ -336,7 +383,7 @@ export function HeroBannerSlider() {
         - Mobile & Tablet: flexible column stack (top text, bottom container images)
         - Desktop (>= 1024px): side-by-side overlay matching graphic ratio (7680 / 3368)
       */}
-      <div className="relative w-full min-h-[580px] sm:min-h-[640px] md:min-h-[720px] lg:min-h-0 lg:aspect-[7680/3368] overflow-hidden flex flex-col justify-between lg:block">
+      <div className="relative w-full min-h-[640px] sm:min-h-[700px] md:min-h-[780px] lg:min-h-[580px] xl:min-h-[660px] lg:aspect-[7680/3400] overflow-hidden flex flex-col justify-between lg:block">
         
         {/* ===================================================================
             LAYER 1: Crossfading Background Scenes (Images 5 to 8)
@@ -373,59 +420,86 @@ export function HeroBannerSlider() {
           className="pointer-events-none absolute inset-0 z-[5] bg-gradient-to-b from-[#0a1422]/95 via-[#0a1422]/75 to-[#0a1422]/25 lg:hidden"
         />
 
+        {/* Desktop Left Dark Scrim (ensures white text is always 100% readable over any bright background) */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 w-[58vw] z-[5] bg-gradient-to-r from-[#0a1422]/95 via-[#0a1422]/60 to-transparent hidden lg:block"
+        />
+
         {/* ===================================================================
             TOP TEXT on Mobile/Tablet / LEFT TEXT on Desktop
             =================================================================== */}
         <div
           ref={textContainerRef}
-          key={`text-${currentSlide.id}`}
-          className="relative z-20 w-full pt-5 sm:pt-7 md:pt-9 px-4 sm:px-8 md:px-10 lg:p-0 
-                     lg:absolute lg:left-[3.2vw] lg:top-1/2 lg:-translate-y-1/2 
-                     max-w-[560px] sm:max-w-[640px] md:max-w-[700px] lg:max-w-none lg:w-[46vw]"
+          className="relative z-20 w-full pt-4 sm:pt-6 md:pt-8 px-4 sm:px-8 md:px-10 lg:p-0 
+                     lg:absolute lg:left-[3.5vw] lg:top-1/2 lg:-translate-y-1/2 
+                     max-w-[620px] sm:max-w-[700px] md:max-w-[760px] lg:max-w-none lg:w-[48vw]"
         >
-          {/* 1. Eyebrow: "Your Trusted Partner for Quality Container Solutions" */}
-          <div data-text-anim className="flex items-center gap-1.5 flex-wrap">
-            <span className="font-sans text-[12px] sm:text-[13px] md:text-[14px] lg:text-[0.98vw] font-semibold text-white/90 tracking-normal drop-shadow-xs">
-              {currentSlide.eyebrow}
-            </span>
-            <span
-              className={`font-sans text-[12px] sm:text-[13px] md:text-[14px] lg:text-[0.98vw] font-bold tracking-normal drop-shadow-xs ${currentSlide.highlightClass}`}
-            >
-              {currentSlide.eyebrowHighlight}
-            </span>
+          {/* Slides Content Stack */}
+          <div className="relative min-h-[250px] sm:min-h-[290px] md:min-h-[320px] lg:min-h-[19vw]">
+            {bannerSlides.map((slide, idx) => {
+              const isActive = idx === currentIndex;
+              return (
+                <div
+                  key={slide.id}
+                  ref={(el) => {
+                    textSlideRefs.current[idx] = el;
+                  }}
+                  className={`transition-opacity ${
+                    isActive ? "relative z-10 pointer-events-auto" : "absolute inset-0 z-0 pointer-events-none"
+                  }`}
+                  style={{
+                    opacity: idx === 0 ? 1 : 0,
+                  }}
+                >
+                  {/* 1. Eyebrow: "Your Trusted Partner for Quality Container Solutions" */}
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="font-sans text-[12px] sm:text-[13px] md:text-[14px] lg:text-[0.95vw] font-semibold text-white/90 tracking-normal drop-shadow-xs">
+                      {slide.eyebrow}
+                    </span>
+                    <span
+                      className={`font-sans text-[12px] sm:text-[13px] md:text-[14px] lg:text-[0.95vw] font-bold tracking-normal drop-shadow-xs ${slide.highlightClass}`}
+                    >
+                      {slide.eyebrowHighlight}
+                    </span>
+                  </div>
+
+                  {/* 2. Main Heading: High-Impact 4-Line Text matching reference image */}
+                  <h1
+                    className="mt-2.5 sm:mt-3 lg:mt-[0.8vw] font-display font-bold tracking-tight text-white leading-[1.05]
+                               text-[2.2rem] sm:text-[2.75rem] md:text-[3.2rem] lg:text-[3.6vw] xl:text-[3.85vw] drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)] max-w-[340px] sm:max-w-[420px] lg:max-w-[28vw]"
+                  >
+                    {slide.titleLines.map((line, lIdx) => (
+                      <span key={lIdx} className="block whitespace-nowrap">
+                        {line}
+                      </span>
+                    ))}
+                  </h1>
+
+                  {/* 3. Description Paragraph */}
+                  <p
+                    className="mt-3 sm:mt-3.5 lg:mt-[1.1vw] font-sans text-white/90 font-normal leading-[1.6] 
+                               text-[13px] sm:text-[14px] md:text-[14.5px] lg:text-[1vw] 
+                               max-w-[440px] sm:max-w-[500px] lg:max-w-[36vw] drop-shadow-xs"
+                  >
+                    {slide.description}
+                  </p>
+                </div>
+              );
+            })}
           </div>
 
-          {/* 2. Main Heading: High-Impact Dual Line matching reference image */}
-          <h1
-            data-text-anim
-            className="mt-2 sm:mt-2.5 lg:mt-[0.7vw] font-display font-bold tracking-tight text-white leading-[1.08]
-                       text-[1.75rem] sm:text-[2.2rem] md:text-[2.6rem] lg:text-[3.35vw] drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
-          >
-            <span className="block whitespace-normal xl:whitespace-nowrap">{currentSlide.titleLine1}</span>
-            <span className="block whitespace-normal xl:whitespace-nowrap">{currentSlide.titleLine2}</span>
-          </h1>
-
-          {/* 3. Description Paragraph */}
-          <p
-            data-text-anim
-            className="mt-2 sm:mt-2.5 lg:mt-[0.9vw] font-sans text-white/85 font-normal leading-[1.5] 
-                       text-[12.5px] sm:text-[13.5px] md:text-[14px] lg:text-[0.98vw] 
-                       max-w-[460px] sm:max-w-[520px] md:max-w-[580px] lg:max-w-[38vw] drop-shadow-xs"
-          >
-            {currentSlide.description}
-          </p>
-
-          {/* 4. Action Button + Arrow Controls Side-by-Side (matching yellow drawing) */}
+          {/* 4. Action Button + Arrow Controls Side-by-Side (aligned side-by-side in single horizontal row) */}
           <div
-            data-text-anim
-            className="mt-4 sm:mt-5 md:mt-6 lg:mt-[1.6vw] flex items-center gap-2.5 sm:gap-3.5 lg:gap-[0.85vw]"
+            className="mt-4 sm:mt-5 md:mt-6 lg:mt-[1.5vw] flex flex-nowrap items-center gap-3 sm:gap-3.5 lg:gap-[0.85vw] relative z-20"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
+            {/* CTA Button */}
             <Link
               href={currentSlide.ctaLink}
-              className="inline-flex items-center justify-center rounded-[8px] sm:rounded-[10px] lg:rounded-[0.55vw] bg-white px-5 sm:px-7 lg:px-[1.6vw] py-2.5 sm:py-3 lg:py-[0.75vw] font-sans font-bold text-[13px] sm:text-[14.5px] lg:text-[0.98vw] text-[#0b192c] shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-slate-100 hover:scale-105 active:scale-95 cursor-pointer"
-              aria-label={`Explore ${currentSlide.titleLine1} ${currentSlide.titleLine2}`}
+              className="shrink-0 whitespace-nowrap inline-flex h-10 sm:h-11 lg:h-[2.85vw] items-center justify-center rounded-[10px] lg:rounded-[0.6vw] bg-white px-6 sm:px-7 lg:px-[1.8vw] font-sans font-bold text-[13px] sm:text-[14px] lg:text-[1vw] text-[#0b192c] shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-slate-100 hover:scale-105 active:scale-95 cursor-pointer"
+              aria-label={`Explore ${currentSlide.titleLines.join(" ")}`}
             >
               <span>{currentSlide.ctaText}</span>
             </Link>
@@ -439,7 +513,7 @@ export function HeroBannerSlider() {
                 prevSlide();
               }}
               aria-label="Previous slide"
-              className="group flex h-9 w-9 sm:h-10 sm:w-10 lg:h-[2.85vw] lg:w-[2.85vw] items-center justify-center rounded-full bg-white text-slate-900 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-slate-100 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-white border border-white/60 cursor-pointer"
+              className="shrink-0 group flex h-10 w-10 sm:h-11 sm:w-11 lg:h-[2.85vw] lg:w-[2.85vw] items-center justify-center rounded-full bg-white text-slate-900 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-slate-100 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-white border border-white/60 cursor-pointer"
             >
               <ChevronLeft
                 aria-hidden
@@ -456,7 +530,7 @@ export function HeroBannerSlider() {
                 nextSlide();
               }}
               aria-label="Next slide"
-              className="group flex h-9 w-9 sm:h-10 sm:w-10 lg:h-[2.85vw] lg:w-[2.85vw] items-center justify-center rounded-full bg-white text-slate-900 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-slate-100 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-white border border-white/60 cursor-pointer"
+              className="shrink-0 group flex h-10 w-10 sm:h-11 sm:w-11 lg:h-[2.85vw] lg:w-[2.85vw] items-center justify-center rounded-full bg-white text-slate-900 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-slate-100 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-white border border-white/60 cursor-pointer"
             >
               <ChevronRight
                 aria-hidden

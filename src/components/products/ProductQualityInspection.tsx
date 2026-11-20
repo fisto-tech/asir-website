@@ -177,12 +177,12 @@ export function ProductQualityInspection() {
           {/* Left Column: Heading, Quote, and 3 Sub-Tab Buttons */}
           <div className="flex flex-col justify-between lg:col-span-7 min-w-0 w-full">
             <div className="min-w-0 w-full">
-              {/* Heading 1: Quality Control (Signature Brand Blue) */}
+              {/* Heading 1: Quality Control (Signature Deep Blue #194e9e) */}
               <div className="flex items-center gap-2.5 lg:gap-[0.6vw]">
-                <span className="h-[2px] lg:h-[0.14vw] w-6 lg:w-[1.6vw] bg-[#0066cc]" />
+                <span className="h-[2px] lg:h-[0.14vw] w-6 lg:w-[1.6vw] bg-[#194e9e]" />
                 <h2
                   id="quality-inspection-heading"
-                  className="font-mono text-[12px] sm:text-[13px] lg:text-[0.85vw] font-bold uppercase tracking-[0.2em] text-[#0066cc]"
+                  className="font-mono text-[12px] sm:text-[13px] lg:text-[0.85vw] font-bold uppercase tracking-[0.2em] text-[#194e9e]"
                 >
                   Quality Control
                 </h2>
@@ -228,7 +228,7 @@ export function ProductQualityInspection() {
 
                       {/* Sub-tab text on the SAME line */}
                       <span
-                        className={`text-[12.5px] sm:text-[13px] lg:text-[0.9vw] font-bold leading-tight transition-colors min-w-0 flex-1 truncate sm:whitespace-normal ${
+                        className={`font-outfit text-[12.5px] sm:text-[13px] lg:text-[0.9vw] font-bold leading-tight transition-colors min-w-0 flex-1 truncate sm:whitespace-normal ${
                           isActive ? "text-ink" : "text-slate-600 group-hover:text-ink"
                         }`}
                       >
@@ -252,26 +252,26 @@ export function ProductQualityInspection() {
             <div
               data-stage-panel
               key={stage.id}
-              className="mt-4 sm:mt-5 lg:mt-[1.2vw] rounded-2xl lg:rounded-[1.2vw] border border-slate-200/70 bg-[#faf8f5]/80 p-4 sm:p-5 lg:p-[1.4vw] min-w-0 w-full"
+              className="mt-4 sm:mt-5 lg:mt-[1.2vw] rounded-2xl lg:rounded-[1.2vw] border border-slate-200/70 bg-[#faf8f5]/80 p-4 sm:p-5 lg:p-[1.4vw] min-w-0 w-full font-outfit"
             >
               <div className="flex flex-wrap items-center justify-between gap-2 lg:gap-[0.5vw]">
-                <h3 className="font-display text-[15.5px] sm:text-[17px] lg:text-[1.2vw] font-bold text-ink">
+                <h3 className="font-outfit text-[16px] sm:text-[18px] lg:text-[1.25vw] font-bold tracking-tight text-ink">
                   {stage.heading}
                 </h3>
-                <span className="font-mono text-[11px] sm:text-[11.5px] lg:text-[0.75vw] font-semibold text-slate-400">
+                <span className="font-outfit text-[11px] sm:text-[12px] lg:text-[0.78vw] font-bold text-slate-500 bg-slate-200/60 px-2.5 py-0.5 rounded-full">
                   {stage.activities.length} Checks
                 </span>
               </div>
 
-              <p className="mt-2 lg:mt-[0.5vw] text-[13.5px] sm:text-[14.5px] lg:text-[0.95vw] leading-relaxed text-slate-600 break-words">
+              <p className="mt-2.5 lg:mt-[0.6vw] font-outfit text-[14px] sm:text-[15px] lg:text-[1vw] leading-relaxed text-slate-600 break-words font-normal">
                 {stage.content}
               </p>
 
-              <ul className="mt-3.5 lg:mt-[0.9vw] grid gap-2 lg:gap-[0.5vw] sm:grid-cols-2 min-w-0">
+              <ul className="mt-3.5 lg:mt-[0.9vw] grid gap-2 lg:gap-[0.6vw] sm:grid-cols-2 min-w-0">
                 {stage.activities.map((act) => (
                   <li
                     key={act}
-                    className="flex items-start gap-2.5 lg:gap-[0.5vw] text-[12.5px] sm:text-[13.5px] lg:text-[0.88vw] font-medium text-slate-700 min-w-0"
+                    className="flex items-start gap-2.5 lg:gap-[0.5vw] font-outfit text-[13px] sm:text-[14px] lg:text-[0.92vw] font-medium text-slate-700 min-w-0"
                   >
                     <CheckCircle2
                       className="h-4 w-4 lg:h-[1vw] lg:w-[1vw] text-emerald-600 shrink-0 mt-0.5"
