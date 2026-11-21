@@ -13,27 +13,29 @@ import {
 } from "lucide-react";
 import { useScrollReveal } from "@/lib/animations";
 import { ScrollRotatingLid } from "@/components/machineries/ScrollRotatingLid";
+import { Reveal } from "@/components/motion/Reveal";
 
 export function AuxiliariesSection() {
   const root = useRef<HTMLElement | null>(null);
   useScrollReveal(root);
 
   return (
-    <section
-      ref={root}
-      className="relative overflow-hidden bg-gradient-to-r from-[#d8eeff] via-[#e4ecf2] to-[#d8eeff] py-12 lg:py-[3.5vw] border-b border-[#cfe6fa]"
-    >
-      {/* Subtle ambient architectural glow */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-20 -top-24 h-[500px] w-[500px] lg:h-[35vw] lg:w-[35vw] rounded-full border-[36px] lg:border-[2.4vw] border-[#0066ff]/[0.04] blur-[1px]"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-20 -bottom-24 h-[500px] w-[500px] lg:h-[35vw] lg:w-[35vw] rounded-full border-[36px] lg:border-[2.4vw] border-[#0066ff]/[0.04] blur-[1px]"
-      />
+    <>
+      <section
+        ref={root}
+        className="relative overflow-hidden bg-gradient-to-r from-[#d8eeff] via-[#e4ecf2] to-[#d8eeff] py-12 lg:py-[3.5vw]"
+      >
+        {/* Subtle ambient architectural glow */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-20 -top-24 h-[500px] w-[500px] lg:h-[35vw] lg:w-[35vw] rounded-full border-[36px] lg:border-[2.4vw] border-[#0066ff]/[0.04] blur-[1px]"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-20 -bottom-24 h-[500px] w-[500px] lg:h-[35vw] lg:w-[35vw] rounded-full border-[36px] lg:border-[2.4vw] border-[#0066ff]/[0.04] blur-[1px]"
+        />
 
-      <div className="shell relative z-10 max-w-[1440px] lg:max-w-[92vw] px-5 sm:px-8 lg:px-[4vw]">
+        <div className="shell relative z-10 max-w-[1440px] lg:max-w-[92vw] px-5 sm:px-8 lg:px-[4vw]">
         {/* Interactive Scroll-Rotating Lid: Positioned inside shell, begins in top-right hero circle, rotates and glides behind alternating image cards */}
         <ScrollRotatingLid mode="2-topics" />
 
@@ -162,75 +164,89 @@ export function AuxiliariesSection() {
               </div>
             </div>
           </div>
-
-        {/* Complete Auxiliary Plant Support Ledger (Minimal Architectural Strip - No SaaS Cards) */}
-        <div className="pt-8 lg:pt-[2vw] border-t border-slate-300/60" data-reveal data-reveal-dir="up" data-reveal-delay="0.1">
-          <div className="flex items-center justify-between mb-4 lg:mb-[1vw]">
-            <span className="font-mono text-[11px] lg:text-[0.75vw] font-bold tracking-wider text-[#0066cc] uppercase">
-              PLANT AUXILIARY FOOTPRINT // COMPLETE INVENTORY
-            </span>
-            <span className="text-[12px] lg:text-[0.8vw] font-medium text-slate-500">Synchronized Process Infrastructure</span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-[1vw]">
-            <div className="border-l-2 lg:border-l-[0.15vw] border-[#0066cc] pl-3 lg:pl-[0.8vw] py-1 lg:py-[0.3vw]">
-              <div className="flex items-center gap-1.5 lg:gap-[0.4vw] text-slate-500 text-[12px] lg:text-[0.8vw]">
-                <Snowflake className="h-3.5 w-3.5 lg:h-[0.9vw] lg:w-[0.9vw] text-[#0066cc]" />
-                <span>Chilling Plants</span>
-              </div>
-              <div className="font-display font-extrabold text-[18px] lg:text-[1.2vw] text-slate-900 mt-0.5 lg:mt-[0.2vw]">2 Units</div>
-              <div className="text-[11px] lg:text-[0.72vw] text-slate-500">Chiller 1 & Chiller 2</div>
-            </div>
-
-            <div className="border-l-2 lg:border-l-[0.15vw] border-amber-500 pl-3 lg:pl-[0.8vw] py-1 lg:py-[0.3vw]">
-              <div className="flex items-center gap-1.5 lg:gap-[0.4vw] text-slate-500 text-[12px] lg:text-[0.8vw]">
-                <SunMedium className="h-3.5 w-3.5 lg:h-[0.9vw] lg:w-[0.9vw] text-amber-500" />
-                <span>Hopper Dryers</span>
-              </div>
-              <div className="font-display font-extrabold text-[18px] lg:text-[1.2vw] text-slate-900 mt-0.5 lg:mt-[0.2vw]">8 Units</div>
-              <div className="text-[11px] lg:text-[0.72vw] text-slate-500">Continuous Dehumidifying</div>
-            </div>
-
-            <div className="border-l-2 lg:border-l-[0.15vw] border-rose-500 pl-3 lg:pl-[0.8vw] py-1 lg:py-[0.3vw]">
-              <div className="flex items-center gap-1.5 lg:gap-[0.4vw] text-slate-500 text-[12px] lg:text-[0.8vw]">
-                <Thermometer className="h-3.5 w-3.5 lg:h-[0.9vw] lg:w-[0.9vw] text-rose-500" />
-                <span>Mould Temp</span>
-              </div>
-              <div className="font-display font-extrabold text-[18px] lg:text-[1.2vw] text-slate-900 mt-0.5 lg:mt-[0.2vw]">6 Units</div>
-              <div className="text-[11px] lg:text-[0.72vw] text-slate-500">MTC Micro-Regulation</div>
-            </div>
-
-            <div className="border-l-2 lg:border-l-[0.15vw] border-emerald-500 pl-3 lg:pl-[0.8vw] py-1 lg:py-[0.3vw]">
-              <div className="flex items-center gap-1.5 lg:gap-[0.4vw] text-slate-500 text-[12px] lg:text-[0.8vw]">
-                <Recycle className="h-3.5 w-3.5 lg:h-[0.9vw] lg:w-[0.9vw] text-emerald-500" />
-                <span>Granulators</span>
-              </div>
-              <div className="font-display font-extrabold text-[18px] lg:text-[1.2vw] text-slate-900 mt-0.5 lg:mt-[0.2vw]">4 Units</div>
-              <div className="text-[11px] lg:text-[0.72vw] text-slate-500">Closed-Loop Recycling</div>
-            </div>
-
-            <div className="border-l-2 lg:border-l-[0.15vw] border-indigo-500 pl-3 lg:pl-[0.8vw] py-1 lg:py-[0.3vw]">
-              <div className="flex items-center gap-1.5 lg:gap-[0.4vw] text-slate-500 text-[12px] lg:text-[0.8vw]">
-                <Wind className="h-3.5 w-3.5 lg:h-[0.9vw] lg:w-[0.9vw] text-indigo-500" />
-                <span>Compressors</span>
-              </div>
-              <div className="font-display font-extrabold text-[18px] lg:text-[1.2vw] text-slate-900 mt-0.5 lg:mt-[0.2vw]">3 Units</div>
-              <div className="text-[11px] lg:text-[0.72vw] text-slate-500">Multi-Bar Screw Air</div>
-            </div>
-
-            <div className="border-l-2 lg:border-l-[0.15vw] border-sky-500 pl-3 lg:pl-[0.8vw] py-1 lg:py-[0.3vw]">
-              <div className="flex items-center gap-1.5 lg:gap-[0.4vw] text-slate-500 text-[12px] lg:text-[0.8vw]">
-                <Droplets className="h-3.5 w-3.5 lg:h-[0.9vw] lg:w-[0.9vw] text-sky-500" />
-                <span>Cooling Tower</span>
-              </div>
-              <div className="font-display font-extrabold text-[18px] lg:text-[1.2vw] text-slate-900 mt-0.5 lg:mt-[0.2vw]">1 Unit</div>
-              <div className="text-[11px] lg:text-[0.72vw] text-slate-500">Induced Draft System</div>
-            </div>
-          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+      {/* Complete Auxiliary Plant Support Ledger (Clean White Strip Matching Banner) */}
+      <section className="relative bg-white pt-8 sm:pt-10 lg:pt-[2.5vw] pb-6 sm:pb-8 lg:pb-[2vw]">
+        <Reveal className="shell relative z-10 max-w-[1440px] lg:max-w-[92vw] px-5 sm:px-8 lg:px-[4vw]">
+          <div data-reveal data-reveal-dir="up" data-reveal-delay="0.1">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 lg:mb-[1.5vw] pb-3 border-b border-slate-200/80">
+              <div className="flex items-center gap-2.5">
+                <span className="h-[2px] w-6 lg:w-[1.5vw] bg-[#194e9e]" />
+                <h3 className="font-display text-[17px] sm:text-[19px] lg:text-[1.25vw] font-bold text-slate-900 tracking-tight">
+                  Plant Auxiliary Footprint
+                </h3>
+                <span className="text-slate-300 select-none">|</span>
+                <span className="font-mono text-[11.5px] sm:text-[12px] lg:text-[0.78vw] font-bold uppercase tracking-wider text-[#194e9e]">
+                  Complete Inventory
+                </span>
+              </div>
+              <span className="text-[12px] sm:text-[12.5px] lg:text-[0.8vw] font-semibold text-slate-500">
+                Synchronized Process Infrastructure
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-[1.2vw]">
+              <div className="border-l-2 lg:border-l-[0.18vw] border-[#194e9e] pl-3.5 lg:pl-[0.8vw] py-1">
+                <div className="flex items-center gap-1.5 lg:gap-[0.4vw] text-slate-800 font-bold text-[13px] lg:text-[0.85vw]">
+                  <Snowflake className="h-4 w-4 lg:h-[1vw] lg:w-[1vw] text-[#194e9e] shrink-0" />
+                  <span>Chilling Plants</span>
+                </div>
+                <div className="font-display font-black text-[20px] lg:text-[1.3vw] text-slate-950 mt-1 lg:mt-[0.25vw]">2 Units</div>
+                <div className="text-[11.5px] lg:text-[0.75vw] font-semibold text-slate-600 mt-0.5">Chiller 1 & Chiller 2</div>
+              </div>
+
+              <div className="border-l-2 lg:border-l-[0.18vw] border-amber-500 pl-3.5 lg:pl-[0.8vw] py-1">
+                <div className="flex items-center gap-1.5 lg:gap-[0.4vw] text-slate-800 font-bold text-[13px] lg:text-[0.85vw]">
+                  <SunMedium className="h-4 w-4 lg:h-[1vw] lg:w-[1vw] text-amber-600 shrink-0" />
+                  <span>Hopper Dryers</span>
+                </div>
+                <div className="font-display font-black text-[20px] lg:text-[1.3vw] text-slate-950 mt-1 lg:mt-[0.25vw]">8 Units</div>
+                <div className="text-[11.5px] lg:text-[0.75vw] font-semibold text-slate-600 mt-0.5">Continuous Dehumidifying</div>
+              </div>
+
+              <div className="border-l-2 lg:border-l-[0.18vw] border-rose-500 pl-3.5 lg:pl-[0.8vw] py-1">
+                <div className="flex items-center gap-1.5 lg:gap-[0.4vw] text-slate-800 font-bold text-[13px] lg:text-[0.85vw]">
+                  <Thermometer className="h-4 w-4 lg:h-[1vw] lg:w-[1vw] text-rose-600 shrink-0" />
+                  <span>Mould Temp</span>
+                </div>
+                <div className="font-display font-black text-[20px] lg:text-[1.3vw] text-slate-950 mt-1 lg:mt-[0.25vw]">6 Units</div>
+                <div className="text-[11.5px] lg:text-[0.75vw] font-semibold text-slate-600 mt-0.5">MTC Micro-Regulation</div>
+              </div>
+
+              <div className="border-l-2 lg:border-l-[0.18vw] border-emerald-500 pl-3.5 lg:pl-[0.8vw] py-1">
+                <div className="flex items-center gap-1.5 lg:gap-[0.4vw] text-slate-800 font-bold text-[13px] lg:text-[0.85vw]">
+                  <Recycle className="h-4 w-4 lg:h-[1vw] lg:w-[1vw] text-emerald-600 shrink-0" />
+                  <span>Granulators</span>
+                </div>
+                <div className="font-display font-black text-[20px] lg:text-[1.3vw] text-slate-950 mt-1 lg:mt-[0.25vw]">4 Units</div>
+                <div className="text-[11.5px] lg:text-[0.75vw] font-semibold text-slate-600 mt-0.5">Closed-Loop Recycling</div>
+              </div>
+
+              <div className="border-l-2 lg:border-l-[0.18vw] border-indigo-500 pl-3.5 lg:pl-[0.8vw] py-1">
+                <div className="flex items-center gap-1.5 lg:gap-[0.4vw] text-slate-800 font-bold text-[13px] lg:text-[0.85vw]">
+                  <Wind className="h-4 w-4 lg:h-[1vw] lg:w-[1vw] text-indigo-600 shrink-0" />
+                  <span>Compressors</span>
+                </div>
+                <div className="font-display font-black text-[20px] lg:text-[1.3vw] text-slate-950 mt-1 lg:mt-[0.25vw]">3 Units</div>
+                <div className="text-[11.5px] lg:text-[0.75vw] font-semibold text-slate-600 mt-0.5">Multi-Bar Screw Air</div>
+              </div>
+
+              <div className="border-l-2 lg:border-l-[0.18vw] border-sky-500 pl-3.5 lg:pl-[0.8vw] py-1">
+                <div className="flex items-center gap-1.5 lg:gap-[0.4vw] text-slate-800 font-bold text-[13px] lg:text-[0.85vw]">
+                  <Droplets className="h-4 w-4 lg:h-[1vw] lg:w-[1vw] text-sky-600 shrink-0" />
+                  <span>Cooling Tower</span>
+                </div>
+                <div className="font-display font-black text-[20px] lg:text-[1.3vw] text-slate-950 mt-1 lg:mt-[0.25vw]">1 Unit</div>
+                <div className="text-[11.5px] lg:text-[0.75vw] font-semibold text-slate-600 mt-0.5">Induced Draft System</div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </section>
+    </>
   );
 }
 

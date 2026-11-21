@@ -51,7 +51,7 @@ export function OurCapabilities() {
         {/* Section Header */}
         <div className="flex flex-wrap items-end justify-between gap-4 pb-8 lg:pb-10">
           <div data-reveal data-reveal-dir="left" data-reveal-delay="0.1">
-            <h2 className="font-display text-[clamp(1.9rem,3.2vw,2.6rem)] font-extrabold text-ink tracking-tight">
+            <h2 className="font-display text-[clamp(1.9rem,3.2vw,2.6rem)] font-bold text-ink tracking-tight">
               Our Capabilities
             </h2>
           </div>

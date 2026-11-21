@@ -177,7 +177,7 @@ export function FlowStrip() {
                         <step.icon aria-hidden className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.9} />
                       </span>
 
-                      <span className="font-mono text-[11px] font-bold tracking-wider text-slate-400">
+                      <span className="font-display text-[11px] font-bold tracking-wider text-slate-400">
                         STAGE {step.stepNum}
                       </span>
                     </div>

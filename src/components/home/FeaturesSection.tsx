@@ -187,8 +187,8 @@ export function FeaturesSection({ index = "02" }: Props) {
           transformOrigin: "50% 50%",
         });
 
-        // Automatic Pop-Up Timeline: Highlights each feature node sequentially for ~2.2s in a continuous loop
-        const autoPopLoop = gsap.timeline({ repeat: -1, delay: 0.6, paused: true });
+        // Automatic Pop-Up Timeline: Highlights each feature node sequentially in a continuous loop
+        const autoPopLoop = gsap.timeline({ repeat: -1, delay: 0.3, paused: true });
 
         featuresList.forEach((item, i) => {
           const badge = `.feature-badge-${i}`;
@@ -196,24 +196,24 @@ export function FeaturesSection({ index = "02" }: Props) {
           const icon = `.feature-icon-${i}`;
 
           autoPopLoop
-            // Pop up node i without shadow
+            // Pop up node i
             .to(badge, {
               scale: 1.22,
-              duration: 0.45,
+              duration: 0.4,
               ease: "back.out(2.2)",
             })
-            .to(icon, { scale: 1.15, duration: 0.35, ease: "back.out(2)" }, "<")
-            .to(text, { scale: 1.08, duration: 0.35, ease: "power2.out" }, "<")
-            // Hold popped-up state for 2.2 seconds!
-            .to({}, { duration: 2.2 })
+            .to(icon, { scale: 1.15, duration: 0.32, ease: "back.out(2)" }, "<")
+            .to(text, { scale: 1.08, duration: 0.32, ease: "power2.out" }, "<")
+            // Hold popped-up state for 1.4 seconds
+            .to({}, { duration: 1.4 })
             // Ease back to normal rest state
             .to(badge, {
               scale: 1,
-              duration: 0.4,
+              duration: 0.35,
               ease: "power2.out",
             })
-            .to(icon, { scale: 1, duration: 0.35, ease: "power2.out" }, "<")
-            .to(text, { scale: 1, duration: 0.35, ease: "power2.out" }, "<0.05");
+            .to(icon, { scale: 1, duration: 0.3, ease: "power2.out" }, "<")
+            .to(text, { scale: 1, duration: 0.3, ease: "power2.out" }, "<0.05");
         });
 
         const tl = gsap.timeline({
@@ -222,7 +222,7 @@ export function FeaturesSection({ index = "02" }: Props) {
           },
           scrollTrigger: {
             trigger: containerRef.current,
-            start: "top 80%",
+            start: "top 85%",
             once: true,
           },
         });
@@ -283,20 +283,19 @@ export function FeaturesSection({ index = "02" }: Props) {
           "-=0.4"
         );
 
-        // Pause auto-pop when cursor hovers over the features, resume on leave
-        const scope = containerRef.current;
-        if (scope) {
-          const onEnter = () => autoPopLoop.pause();
-          const onLeave = () => autoPopLoop.resume();
-          scope.addEventListener("mouseenter", onEnter);
-          scope.addEventListener("mouseleave", onLeave);
-        }
+        // Pause auto-pop only when cursor specifically hovers over a feature node
+        const nodes = containerRef.current?.querySelectorAll(".feature-node");
+        nodes?.forEach((node) => {
+          node.addEventListener("mouseenter", () => autoPopLoop.pause());
+          node.addEventListener("mouseleave", () => autoPopLoop.resume());
+        });
 
-        // Pause when scrolled out of view to preserve resources
+        // Reliable viewport ScrollTrigger: Play when in view, pause when out of view
         ScrollTrigger.create({
           trigger: containerRef.current,
-          start: "top bottom",
-          end: "bottom top",
+          start: "top 85%",
+          end: "bottom 15%",
+          onEnter: () => autoPopLoop.play(),
           onLeave: () => autoPopLoop.pause(),
           onEnterBack: () => autoPopLoop.resume(),
           onLeaveBack: () => autoPopLoop.pause(),
@@ -305,7 +304,7 @@ export function FeaturesSection({ index = "02" }: Props) {
 
       // Mobile (< 768px): subtle slide-up entrance + sequential card pop-up loop
       mm.add("(max-width: 767px)", () => {
-        const mobilePopLoop = gsap.timeline({ repeat: -1, delay: 0.5, paused: true });
+        const mobilePopLoop = gsap.timeline({ repeat: -1, delay: 0.4, paused: true });
         featuresList.forEach((item, i) => {
           const card = `.feature-mobile-card-${i}`;
           const badge = `.feature-mobile-badge-${i}`;
@@ -314,19 +313,19 @@ export function FeaturesSection({ index = "02" }: Props) {
             .to(card, {
               scale: 1.05,
               borderColor: item.color,
-              duration: 0.4,
+              duration: 0.35,
               ease: "back.out(1.8)",
             })
-            .to(badge, { scale: 1.18, duration: 0.35, ease: "back.out(2)" }, "<")
-            // Hold for 2.2 seconds!
-            .to({}, { duration: 2.2 })
+            .to(badge, { scale: 1.18, duration: 0.3, ease: "back.out(2)" }, "<")
+            // Hold for 1.4 seconds
+            .to({}, { duration: 1.4 })
             .to(card, {
               scale: 1,
               borderColor: "rgba(226, 232, 240, 0.9)",
               duration: 0.35,
               ease: "power2.out",
             })
-            .to(badge, { scale: 1, duration: 0.35, ease: "power2.out" }, "<");
+            .to(badge, { scale: 1, duration: 0.3, ease: "power2.out" }, "<");
         });
 
         gsap.from(".feature-mobile-card", {
@@ -340,6 +339,16 @@ export function FeaturesSection({ index = "02" }: Props) {
             start: "top 90%",
             once: true,
           },
+        });
+
+        ScrollTrigger.create({
+          trigger: containerRef.current,
+          start: "top 90%",
+          end: "bottom 10%",
+          onEnter: () => mobilePopLoop.play(),
+          onLeave: () => mobilePopLoop.pause(),
+          onEnterBack: () => mobilePopLoop.resume(),
+          onLeaveBack: () => mobilePopLoop.pause(),
         });
       });
 
@@ -487,11 +496,11 @@ export function FeaturesSection({ index = "02" }: Props) {
                         borderColor: item.color,
                         backgroundColor: item.bgColor,
                       }}
-                      className={`feature-badge-${index} relative flex h-10 w-10 md:h-11 md:w-11 lg:h-[3.2vw] lg:w-[3.2vw] items-center justify-center rounded-full border-[1.5px] transition-all duration-300 ease-out group-hover:scale-115 shrink-0`}
+                      className={`feature-badge-${index} relative flex h-10 w-10 md:h-11 md:w-11 lg:h-[3.2vw] lg:w-[3.2vw] items-center justify-center rounded-full border-[1.5px] transition-colors duration-200 shrink-0`}
                     >
                       <IconComponent
                         style={{ color: item.color }}
-                        className={`feature-icon-${index} h-5 w-5 md:h-5.5 md:w-5.5 lg:h-[1.6vw] lg:w-[1.6vw] transition-transform duration-300 group-hover:scale-110`}
+                        className={`feature-icon-${index} h-5 w-5 md:h-5.5 md:w-5.5 lg:h-[1.6vw] lg:w-[1.6vw]`}
                         strokeWidth={2.2}
                       />
                     </div>
@@ -534,14 +543,14 @@ export function FeaturesSection({ index = "02" }: Props) {
               return (
                 <div
                   key={item.id}
-                  className={`feature-mobile-card feature-mobile-card-${index} flex items-center gap-2 sm:gap-2.5 p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 transition-all hover:border-slate-300 min-w-0`}
+                  className={`feature-mobile-card feature-mobile-card-${index} flex items-center gap-2 sm:gap-2.5 p-2 sm:p-2.5 rounded-xl bg-white border border-slate-200/90 transition-colors hover:border-slate-300 min-w-0`}
                 >
                   <div
                     style={{
                       borderColor: item.color,
                       backgroundColor: item.bgColor,
                     }}
-                    className={`feature-mobile-badge-${index} flex h-8.5 w-8.5 sm:h-9.5 sm:w-9.5 items-center justify-center rounded-full border-[1.5px] shrink-0 transition-transform duration-300`}
+                    className={`feature-mobile-badge-${index} flex h-8.5 w-8.5 sm:h-9.5 sm:w-9.5 items-center justify-center rounded-full border-[1.5px] shrink-0`}
                   >
                     <IconComponent
                       style={{ color: item.color }}

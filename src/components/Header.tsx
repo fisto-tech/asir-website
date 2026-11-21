@@ -31,6 +31,52 @@ const navProductItems = [
   { slug: "15l-square-interlock-pail-f15", title: "15 Litre Interlock", code: "F15p", img: "/images/products/product-images/15ltr.webp" },
 ];
 
+function DropdownProductImage({
+  src,
+  alt,
+  shouldLoad,
+  onLoaded,
+}: {
+  src: string;
+  alt: string;
+  shouldLoad: boolean;
+  onLoaded?: () => void;
+}) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <div className="relative flex h-11 w-11 lg:h-[3vw] lg:w-[3vw] shrink-0 items-center justify-center rounded-xl lg:rounded-[0.7vw] bg-slate-100 group-hover:bg-white transition-all duration-300 shadow-2xs overflow-hidden">
+      {/* Sleek Skeleton Pulse Shimmer for Image Only */}
+      {!loaded && (
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-r from-slate-200/90 via-slate-100/95 to-slate-200/90 animate-pulse rounded-xl lg:rounded-[0.7vw]"
+        />
+      )}
+      {shouldLoad && (
+        <Image
+          src={src}
+          alt={alt}
+          width={44}
+          height={44}
+          loading="eager"
+          onLoad={() => {
+            setLoaded(true);
+            onLoaded?.();
+          }}
+          onError={() => {
+            setLoaded(true);
+            onLoaded?.();
+          }}
+          className={`relative z-10 max-h-10 lg:max-h-[2.6vw] w-auto object-contain transition-opacity duration-300 group-hover:scale-105 ${
+            loaded ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      )}
+    </div>
+  );
+}
+
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
@@ -41,6 +87,7 @@ export function Header() {
   const [machineriesOpen, setMachineriesOpen] = useState(false);
   const [mobileMachineriesOpen, setMobileMachineriesOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [currentLoadIndex, setCurrentLoadIndex] = useState(0);
   const closeTimer = useRef<number | null>(null);
   const machineriesCloseTimer = useRef<number | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
@@ -86,6 +133,15 @@ export function Header() {
     } catch {}
   }, [router]);
 
+  // Progressive one-by-one sequential image loader safeguard timer
+  useEffect(() => {
+    if (currentLoadIndex >= navProductItems.length) return;
+    const timer = setTimeout(() => {
+      setCurrentLoadIndex((prev) => prev + 1);
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [currentLoadIndex]);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
@@ -123,9 +179,8 @@ export function Header() {
     if (!productsOpen && !machineriesOpen) return;
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target as Node;
-      // Do not intercept or abort clicks within header navigation or mobile menu
+      // Do not intercept or abort clicks within navigation or mobile menu
       if (
-        headerRef.current?.contains(target) ||
         productsNavRef.current?.contains(target) ||
         modalRef.current?.contains(target) ||
         machineriesNavRef.current?.contains(target) ||
@@ -178,6 +233,8 @@ export function Header() {
   /* Transparent nav on /contact before scroll */
   const isTransparentNav = pathname === "/contact" && !scrolled && !open;
   const onMachineriesPage = pathname.startsWith("/machineries") || pathname === "/technologies";
+  const isProductionActive = pathname === "/machineries/production-machineries" || pathname === "/technologies";
+  const isAuxiliariesActive = pathname === "/machineries/auxiliaries";
   const overLightHero =
     (pathname === "/" || pathname === "/process" || pathname === "/technologies" || pathname.startsWith("/machineries")) &&
     !scrolled &&
@@ -211,7 +268,6 @@ export function Header() {
       <header
         ref={headerRef}
         onMouseLeave={() => {
-          hoverClose();
           hoverMachineriesClose();
         }}
         className={`fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,height,box-shadow] duration-500 ${
@@ -237,20 +293,29 @@ export function Header() {
           <nav aria-label="Primary" className="hidden items-center gap-7 xl:gap-9 lg:gap-[2.2vw] lg:flex">
             {navigation.map((item) => {
               if (item.label === "Products") {
+                const isProductsActive = onProductsPage || productsOpen;
+
                 return (
                   <div
                     key={item.href}
                     ref={productsNavRef}
                     className="relative flex items-center"
-                    onMouseEnter={hoverOpen}
-                    onMouseLeave={hoverClose}
                   >
-                    <div className="flex items-center gap-1 lg:gap-[0.2vw]">
+                    <div className="group flex items-center gap-1 lg:gap-[0.2vw]">
                       <Link
                         href={item.href}
-                        onClick={(e) => navigateTo(item.href, e)}
-                        className={`link-rule text-[15px] xl:text-[15.5px] lg:text-[1.05vw] font-semibold tracking-tight transition-colors duration-200 cursor-pointer ${linkTone} ${
-                          onProductsPage ? activeLinkClass : ""
+                        onClick={(e) => {
+                          setProductsOpen(false);
+                          navigateTo(item.href, e);
+                        }}
+                        className={`link-rule text-[15px] xl:text-[15.5px] lg:text-[1.05vw] font-semibold tracking-tight transition-colors duration-200 cursor-pointer ${
+                          isTransparentNav
+                            ? isProductsActive
+                              ? "!text-white font-bold after:!bg-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]"
+                              : "text-white/90 group-hover:text-white hover:after:!bg-white"
+                            : isProductsActive
+                              ? "!text-brand font-bold"
+                              : "text-slate-800 group-hover:text-brand"
                         }`}
                         data-active={onProductsPage}
                       >
@@ -261,17 +326,26 @@ export function Header() {
                         aria-expanded={productsOpen}
                         aria-controls="products-menu"
                         aria-label={productsOpen ? "Close products menu" : "Open products menu"}
-                        onClick={() => setProductsOpen((value) => !value)}
-                        className={`flex h-8 w-5 lg:h-[2.2vw] lg:w-[1.4vw] items-center justify-center transition-colors cursor-pointer ${linkTone}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setMachineriesOpen(false);
+                          setProductsOpen((value) => !value);
+                        }}
+                        className={`flex h-8 w-7 lg:h-[2.2vw] lg:w-[1.8vw] items-center justify-center rounded-md hover:bg-slate-100/80 transition-colors cursor-pointer ${
+                          isTransparentNav
+                            ? isProductsActive
+                              ? "text-white hover:bg-white/10"
+                              : "text-white/90 group-hover:text-white hover:bg-white/10"
+                            : isProductsActive
+                              ? "text-brand"
+                              : "text-slate-800 group-hover:text-brand"
+                        }`}
                       >
                         <ChevronDown
                           aria-hidden
                           className={`h-3.5 w-3.5 lg:h-[0.9vw] lg:w-[0.9vw] transition-transform duration-300 stroke-2 ${
-                            productsOpen
-                              ? isTransparentNav
-                                ? "rotate-180 text-white"
-                                : "rotate-180 text-brand"
-                              : ""
+                            productsOpen ? "rotate-180" : ""
                           }`}
                         />
                       </button>
@@ -335,19 +409,48 @@ export function Header() {
                         <Link
                           href="/machineries/production-machineries"
                           onClick={(e) => navigateTo("/machineries/production-machineries", e)}
-                          className="group relative z-10 flex items-start gap-3 lg:gap-[0.7vw] rounded-xl lg:rounded-[0.8vw] p-3 lg:p-[0.7vw] transition-all duration-200 hover:bg-[#0066cc]/[0.08] cursor-pointer"
+                          className={`group relative z-10 flex items-start gap-3 lg:gap-[0.7vw] rounded-xl lg:rounded-[0.8vw] p-3 lg:p-[0.7vw] transition-all duration-200 cursor-pointer ${
+                            isProductionActive
+                              ? "bg-brand/10 border border-brand/30 shadow-2xs"
+                              : "border border-transparent hover:bg-brand/[0.06]"
+                          }`}
                         >
-                          <div className="flex h-9 w-9 lg:h-[2.4vw] lg:w-[2.4vw] shrink-0 items-center justify-center rounded-lg lg:rounded-[0.55vw] bg-blue-50 text-[#0066cc] group-hover:bg-[#0066cc] group-hover:text-white transition-colors duration-200">
+                          <div
+                            className={`flex h-9 w-9 lg:h-[2.4vw] lg:w-[2.4vw] shrink-0 items-center justify-center rounded-lg lg:rounded-[0.55vw] transition-colors duration-200 ${
+                              isProductionActive
+                                ? "bg-brand text-white shadow-xs"
+                                : "bg-blue-50 text-brand group-hover:bg-brand group-hover:text-white"
+                            }`}
+                          >
                             <Cog className="h-5 w-5 lg:h-[1.3vw] lg:w-[1.3vw] transition-transform duration-500 group-hover:rotate-90" strokeWidth={2} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
-                              <span className="font-display text-[12.5px] lg:text-[0.84vw] font-bold text-slate-900 group-hover:text-[#0066cc] transition-colors">
+                              <span
+                                className={`font-display text-[12.5px] lg:text-[0.84vw] font-bold transition-colors ${
+                                  isProductionActive ? "text-brand" : "text-slate-900 group-hover:text-brand"
+                                }`}
+                              >
                                 Production machineries
                               </span>
-                              <ChevronRight className="h-3 w-3 lg:h-[0.78vw] lg:w-[0.78vw] text-slate-400 group-hover:text-[#0066cc] group-hover:translate-x-0.5 transition-all" />
+                              <div className="flex items-center gap-1.5">
+                                {isProductionActive && (
+                                  <span className="h-1.5 w-1.5 lg:h-[0.35vw] lg:w-[0.35vw] rounded-full bg-brand shrink-0" />
+                                )}
+                                <ChevronRight
+                                  className={`h-3 w-3 lg:h-[0.78vw] lg:w-[0.78vw] transition-all ${
+                                    isProductionActive
+                                      ? "text-brand translate-x-0.5"
+                                      : "text-slate-400 group-hover:text-brand group-hover:translate-x-0.5"
+                                  }`}
+                                />
+                              </div>
                             </div>
-                            <p className="text-[11px] lg:text-[0.72vw] text-slate-500 mt-0.5 leading-snug">
+                            <p
+                              className={`text-[11px] lg:text-[0.72vw] mt-0.5 leading-snug transition-colors ${
+                                isProductionActive ? "text-slate-700 font-medium" : "text-slate-500"
+                              }`}
+                            >
                               Screen Printing, HTL, Inmould labeling
                             </p>
                           </div>
@@ -358,19 +461,48 @@ export function Header() {
                         <Link
                           href="/machineries/auxiliaries"
                           onClick={(e) => navigateTo("/machineries/auxiliaries", e)}
-                          className="group relative z-10 flex items-start gap-3 lg:gap-[0.7vw] rounded-xl lg:rounded-[0.8vw] p-3 lg:p-[0.7vw] transition-all duration-200 hover:bg-[#0066cc]/[0.08] cursor-pointer"
+                          className={`group relative z-10 flex items-start gap-3 lg:gap-[0.7vw] rounded-xl lg:rounded-[0.8vw] p-3 lg:p-[0.7vw] transition-all duration-200 cursor-pointer ${
+                            isAuxiliariesActive
+                              ? "bg-brand/10 border border-brand/30 shadow-2xs"
+                              : "border border-transparent hover:bg-brand/[0.06]"
+                          }`}
                         >
-                          <div className="flex h-9 w-9 lg:h-[2.4vw] lg:w-[2.4vw] shrink-0 items-center justify-center rounded-lg lg:rounded-[0.55vw] bg-sky-50 text-sky-600 group-hover:bg-[#0066cc] group-hover:text-white transition-colors duration-200">
+                          <div
+                            className={`flex h-9 w-9 lg:h-[2.4vw] lg:w-[2.4vw] shrink-0 items-center justify-center rounded-lg lg:rounded-[0.55vw] transition-colors duration-200 ${
+                              isAuxiliariesActive
+                                ? "bg-brand text-white shadow-xs"
+                                : "bg-sky-50 text-sky-600 group-hover:bg-brand group-hover:text-white"
+                            }`}
+                          >
                             <Snowflake className="h-5 w-5 lg:h-[1.3vw] lg:w-[1.3vw]" strokeWidth={2} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
-                              <span className="font-display text-[12.5px] lg:text-[0.84vw] font-bold text-slate-900 group-hover:text-[#0066cc] transition-colors">
+                              <span
+                                className={`font-display text-[12.5px] lg:text-[0.84vw] font-bold transition-colors ${
+                                  isAuxiliariesActive ? "text-brand" : "text-slate-900 group-hover:text-brand"
+                                }`}
+                              >
                                 Auxiliaries
                               </span>
-                              <ChevronRight className="h-3 w-3 lg:h-[0.78vw] lg:w-[0.78vw] text-slate-400 group-hover:text-[#0066cc] group-hover:translate-x-0.5 transition-all" />
+                              <div className="flex items-center gap-1.5">
+                                {isAuxiliariesActive && (
+                                  <span className="h-1.5 w-1.5 lg:h-[0.35vw] lg:w-[0.35vw] rounded-full bg-brand shrink-0" />
+                                )}
+                                <ChevronRight
+                                  className={`h-3 w-3 lg:h-[0.78vw] lg:w-[0.78vw] transition-all ${
+                                    isAuxiliariesActive
+                                      ? "text-brand translate-x-0.5"
+                                      : "text-slate-400 group-hover:text-brand group-hover:translate-x-0.5"
+                                  }`}
+                                />
+                              </div>
                             </div>
-                            <p className="text-[11px] lg:text-[0.72vw] text-slate-500 mt-0.5 leading-snug">
+                            <p
+                              className={`text-[11px] lg:text-[0.72vw] mt-0.5 leading-snug transition-colors ${
+                                isAuxiliariesActive ? "text-slate-700 font-medium" : "text-slate-500"
+                              }`}
+                            >
                               Chiller 1, Chiller 2 & plant systems
                             </p>
                           </div>
@@ -451,16 +583,14 @@ export function Header() {
           id="products-menu"
           ref={modalRef}
           aria-hidden={!productsOpen}
-          onMouseEnter={hoverOpen}
-          onMouseLeave={hoverClose}
-          className={`hidden lg:block absolute left-1/2 -translate-x-1/2 top-full pt-1.5 before:absolute before:-top-4 before:inset-x-0 before:h-4 before:content-[''] w-[min(1040px,calc(100vw-2.5rem))] lg:w-[68vw] transition-all duration-200 ${
+          className={`hidden lg:block absolute left-1/2 -translate-x-1/2 top-full pt-1.5 w-[min(1040px,calc(100vw-2.5rem))] lg:w-[68vw] transition-opacity duration-100 ease-out ${
             productsOpen
-              ? "visible opacity-100 translate-y-0 pointer-events-auto"
-              : "invisible opacity-0 -translate-y-2 pointer-events-none"
+              ? "visible opacity-100 pointer-events-auto"
+              : "invisible opacity-0 pointer-events-none"
           }`}
         >
           {/* Inner Card Container */}
-          <div className="max-h-[80vh] lg:max-h-[38vw] overflow-hidden rounded-3xl lg:rounded-[1.6vw] border border-slate-200/90 bg-white p-5 lg:p-[1.5vw] shadow-[0_24px_50px_-12px_rgba(0,35,90,0.18)]">
+          <div className="max-h-[80vh] lg:max-h-[38vw] overflow-hidden rounded-3xl lg:rounded-[1.6vw] border-2 border-brand/40 bg-white p-5 lg:p-[1.5vw] shadow-[0_24px_50px_-12px_rgba(0,35,90,0.22)]">
             {/* Header bar */}
             <div className="flex items-center justify-between pb-3.5 lg:pb-[0.9vw] border-b border-slate-100">
               <div className="flex items-center gap-2.5 lg:gap-[0.6vw]">
@@ -475,36 +605,32 @@ export function Header() {
 
             {/* Responsive grid matching user reference UI */}
             <div className="mt-4 lg:mt-[1vw] grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2.5 lg:gap-[0.8vw] max-h-[60vh] lg:max-h-[30vw] overflow-y-auto pr-1">
-              {navProductItems.map((item) => (
+              {navProductItems.map((item, idx) => (
                 <Link
                   key={item.slug}
                   href={`/products/${item.slug}`}
                   onClick={(e) => navigateTo(`/products/${item.slug}`, e)}
-                  className="group relative flex h-[62px] lg:h-[4.2vw] items-center justify-between rounded-2xl lg:rounded-[1vw] border-[1.5px] border-slate-200 hover:border-brand bg-white hover:bg-brand/[0.04] px-3 lg:px-[0.8vw] py-2 lg:py-[0.5vw] transition-all duration-200 hover:shadow-xs cursor-pointer"
+                  className="group relative flex h-[62px] lg:h-[4.2vw] items-center justify-between rounded-2xl lg:rounded-[1vw] border-[1.5px] border-blue-200/90 hover:border-brand bg-white hover:bg-brand px-3 lg:px-[0.8vw] py-2 lg:py-[0.5vw] transition-all duration-300 hover:shadow-md cursor-pointer"
                 >
                   <div className="flex items-center gap-3 lg:gap-[0.7vw] min-w-0 pr-1">
-                    <div className="relative flex h-11 w-11 lg:h-[3vw] lg:w-[3vw] shrink-0 items-center justify-center rounded-xl lg:rounded-[0.7vw] bg-slate-50 transition-all duration-200 group-hover:bg-blue-50/80">
-                      <Image
-                        src={item.img}
-                        alt={item.title}
-                        width={44}
-                        height={44}
-                        unoptimized
-                        className="max-h-10 lg:max-h-[2.6vw] w-auto object-contain transition-transform duration-200 group-hover:scale-105"
-                      />
-                    </div>
+                    <DropdownProductImage
+                      src={item.img}
+                      alt={item.title}
+                      shouldLoad={idx <= currentLoadIndex}
+                      onLoaded={() => setCurrentLoadIndex((prev) => Math.max(prev, idx + 1))}
+                    />
 
                     <div className="flex flex-col min-w-0">
-                      <span className="font-display text-[12.5px] lg:text-[0.84vw] font-bold leading-tight text-slate-900 group-hover:text-brand transition-colors duration-200 truncate">
+                      <span className="font-display text-[12.5px] lg:text-[0.84vw] font-bold leading-tight text-slate-900 group-hover:text-white transition-colors duration-300 truncate">
                         {item.title}
                       </span>
-                      <span className="text-[11px] lg:text-[0.72vw] font-normal text-slate-400 group-hover:text-slate-600 transition-colors duration-200 mt-0.5">
+                      <span className="text-[11px] lg:text-[0.72vw] font-normal text-slate-400 group-hover:text-blue-100 transition-colors duration-300 mt-0.5">
                         Code : {item.code}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex h-7 w-7 lg:h-[1.9vw] lg:w-[1.9vw] shrink-0 items-center justify-center rounded-full border-[1.5px] border-slate-200 bg-slate-50 text-slate-400 transition-all duration-200 group-hover:border-brand group-hover:bg-brand group-hover:text-white group-hover:translate-x-0.5">
+                  <div className="flex h-7 w-7 lg:h-[1.9vw] lg:w-[1.9vw] shrink-0 items-center justify-center rounded-full border border-brand bg-brand text-white group-hover:bg-white group-hover:border-white group-hover:text-brand transition-all duration-300 group-hover:translate-x-0.5 shadow-2xs">
                     <ChevronRight className="h-3 w-3 lg:h-[0.78vw] lg:w-[0.78vw] stroke-[2.5]" />
                   </div>
                 </Link>
@@ -658,13 +784,22 @@ export function Header() {
                     prefetch={true}
                     tabIndex={open && mobileMachineriesOpen ? 0 : -1}
                     onClick={(e) => navigateTo("/machineries/production-machineries", e)}
-                    className="group flex items-center justify-between rounded-lg px-2.5 py-2 text-[13.5px] text-slate-700 transition-all hover:bg-white hover:text-brand hover:shadow-xs"
+                    className={`group flex items-center justify-between rounded-lg px-2.5 py-2 text-[13.5px] transition-all cursor-pointer ${
+                      isProductionActive
+                        ? "bg-brand/10 text-brand font-bold border border-brand/20 shadow-2xs"
+                        : "text-slate-700 hover:bg-white hover:text-brand hover:shadow-xs"
+                    }`}
                   >
                     <div className="flex items-center gap-2">
                       <Cog className="h-4 w-4 text-brand" />
-                      <span className="font-medium group-hover:text-brand transition-colors">Production machineries</span>
+                      <span className={`transition-colors ${isProductionActive ? "text-brand font-bold" : "font-medium group-hover:text-brand"}`}>
+                        Production machineries
+                      </span>
                     </div>
-                    <ChevronRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-brand transition-colors" />
+                    <div className="flex items-center gap-1.5">
+                      {isProductionActive && <span className="h-1.5 w-1.5 rounded-full bg-brand shrink-0" />}
+                      <ChevronRight className={`h-3.5 w-3.5 transition-colors ${isProductionActive ? "text-brand" : "text-slate-400 group-hover:text-brand"}`} />
+                    </div>
                   </Link>
 
                   <Link
@@ -672,13 +807,22 @@ export function Header() {
                     prefetch={true}
                     tabIndex={open && mobileMachineriesOpen ? 0 : -1}
                     onClick={(e) => navigateTo("/machineries/auxiliaries", e)}
-                    className="group flex items-center justify-between rounded-lg px-2.5 py-2 text-[13.5px] text-slate-700 transition-all hover:bg-white hover:text-brand hover:shadow-xs"
+                    className={`group flex items-center justify-between rounded-lg px-2.5 py-2 text-[13.5px] transition-all cursor-pointer ${
+                      isAuxiliariesActive
+                        ? "bg-brand/10 text-brand font-bold border border-brand/20 shadow-2xs"
+                        : "text-slate-700 hover:bg-white hover:text-brand hover:shadow-xs"
+                    }`}
                   >
                     <div className="flex items-center gap-2">
-                      <Snowflake className="h-4 w-4 text-sky-500" />
-                      <span className="font-medium group-hover:text-brand transition-colors">Auxiliaries</span>
+                      <Snowflake className={`h-4 w-4 ${isAuxiliariesActive ? "text-brand" : "text-sky-500"}`} />
+                      <span className={`transition-colors ${isAuxiliariesActive ? "text-brand font-bold" : "font-medium group-hover:text-brand"}`}>
+                        Auxiliaries
+                      </span>
                     </div>
-                    <ChevronRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-brand transition-colors" />
+                    <div className="flex items-center gap-1.5">
+                      {isAuxiliariesActive && <span className="h-1.5 w-1.5 rounded-full bg-brand shrink-0" />}
+                      <ChevronRight className={`h-3.5 w-3.5 transition-colors ${isAuxiliariesActive ? "text-brand" : "text-slate-400 group-hover:text-brand"}`} />
+                    </div>
                   </Link>
                 </div>
               </div>

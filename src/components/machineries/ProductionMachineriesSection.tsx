@@ -13,7 +13,7 @@ export function ProductionMachineriesSection() {
   return (
     <section
       ref={root}
-      className="relative overflow-hidden bg-gradient-to-r from-[#d8eeff] via-[#e4ecf2] to-[#d8eeff] py-12 lg:py-[3.5vw] border-b border-[#cfe6fa]"
+      className="relative overflow-hidden bg-gradient-to-r from-[#d8eeff] via-[#e4ecf2] to-[#d8eeff] py-12 lg:py-[3.5vw]"
     >
       {/* Subtle ambient architectural glow */}
       <div

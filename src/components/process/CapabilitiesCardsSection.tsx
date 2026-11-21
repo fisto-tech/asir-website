@@ -59,12 +59,12 @@ export function CapabilitiesCardsSection() {
   };
 
   return (
-    <section ref={root} className="bg-sandal py-14 lg:py-[3.5vw] border-b border-line/60">
+    <section ref={root} className="bg-sandal py-8 sm:py-10 lg:py-[2.2vw] border-b border-line/60">
       <div className="shell max-w-[1440px] lg:max-w-[92vw] px-5 sm:px-8 lg:px-[4vw]">
         {/* Section Header */}
-        <div className="flex flex-wrap items-end justify-between gap-4 pb-8 lg:pb-[1.8vw]">
+        <div className="flex flex-wrap items-end justify-between gap-4 pb-5 sm:pb-6 lg:pb-[1.2vw]">
           <div data-reveal data-reveal-dir="left" data-reveal-delay="0.1">
-            <h2 className="font-display text-[1.9rem] sm:text-[2.6rem] lg:text-[2.6vw] font-extrabold text-ink tracking-tight">
+            <h2 className="font-display text-[1.9rem] sm:text-[2.6rem] lg:text-[2.6vw] font-bold text-ink tracking-tight">
               Our Capabilities
             </h2>
           </div>

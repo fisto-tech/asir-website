@@ -266,7 +266,7 @@ export default async function ProductPage({ params }: PageProps) {
       <ProductQualityInspection />
 
       {/* Related */}
-      <section className="bg-white pt-10 sm:pt-12 lg:pt-[3vw] pb-3 sm:pb-4 lg:pb-[1.5vw]">
+      <section className="bg-white pt-3 sm:pt-4 lg:pt-[1vw] pb-3 sm:pb-4 lg:pb-[1.5vw]">
         <div className="shell max-w-[1440px] lg:max-w-[92vw] px-5 sm:px-8 lg:px-[4vw]">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6 lg:pb-[1.2vw]">
             <div>

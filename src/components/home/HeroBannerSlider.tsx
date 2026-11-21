@@ -489,9 +489,9 @@ export function HeroBannerSlider() {
             })}
           </div>
 
-          {/* 4. Action Button + Arrow Controls Side-by-Side (aligned side-by-side in single horizontal row) */}
+          {/* 4. Action Button (Row 1) + Arrow Controls (Row 2, placed directly below Explore More button) */}
           <div
-            className="mt-4 sm:mt-5 md:mt-6 lg:mt-[1.5vw] flex flex-nowrap items-center gap-3 sm:gap-3.5 lg:gap-[0.85vw] relative z-20"
+            className="mt-4 sm:mt-5 md:mt-6 lg:mt-[1.4vw] flex flex-col items-start gap-3 sm:gap-3.5 lg:gap-[0.85vw] relative z-20"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
@@ -504,39 +504,42 @@ export function HeroBannerSlider() {
               <span>{currentSlide.ctaText}</span>
             </Link>
 
-            {/* Prev Slide Arrow (<) */}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                prevSlide();
-              }}
-              aria-label="Previous slide"
-              className="shrink-0 group flex h-10 w-10 sm:h-11 sm:w-11 lg:h-[2.85vw] lg:w-[2.85vw] items-center justify-center rounded-full bg-white text-slate-900 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-slate-100 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-white border border-white/60 cursor-pointer"
-            >
-              <ChevronLeft
-                aria-hidden
-                className="h-4.5 w-4.5 sm:h-5 sm:w-5 lg:h-[1.2vw] lg:w-[1.2vw] stroke-[2.5] transition-transform duration-200 group-hover:-translate-x-0.5"
-              />
-            </button>
+            {/* Navigation Arrows Row (< and >) placed below Explore More */}
+            <div className="flex items-center gap-2.5 sm:gap-3 lg:gap-[0.75vw]">
+              {/* Prev Slide Arrow (<) */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  prevSlide();
+                }}
+                aria-label="Previous slide"
+                className="shrink-0 group flex h-10 w-10 sm:h-11 sm:w-11 lg:h-[2.85vw] lg:w-[2.85vw] items-center justify-center rounded-full bg-white text-slate-900 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-slate-100 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-white border border-white/60 cursor-pointer"
+              >
+                <ChevronLeft
+                  aria-hidden
+                  className="h-4.5 w-4.5 sm:h-5 sm:w-5 lg:h-[1.2vw] lg:w-[1.2vw] stroke-[2.5] transition-transform duration-200 group-hover:-translate-x-0.5"
+                />
+              </button>
 
-            {/* Next Slide Arrow (>) */}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                nextSlide();
-              }}
-              aria-label="Next slide"
-              className="shrink-0 group flex h-10 w-10 sm:h-11 sm:w-11 lg:h-[2.85vw] lg:w-[2.85vw] items-center justify-center rounded-full bg-white text-slate-900 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-slate-100 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-white border border-white/60 cursor-pointer"
-            >
-              <ChevronRight
-                aria-hidden
-                className="h-4.5 w-4.5 sm:h-5 sm:w-5 lg:h-[1.2vw] lg:w-[1.2vw] stroke-[2.5] transition-transform duration-200 group-hover:translate-x-0.5"
-              />
-            </button>
+              {/* Next Slide Arrow (>) */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  nextSlide();
+                }}
+                aria-label="Next slide"
+                className="shrink-0 group flex h-10 w-10 sm:h-11 sm:w-11 lg:h-[2.85vw] lg:w-[2.85vw] items-center justify-center rounded-full bg-white text-slate-900 shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-slate-100 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-white border border-white/60 cursor-pointer"
+              >
+                <ChevronRight
+                  aria-hidden
+                  className="h-4.5 w-4.5 sm:h-5 sm:w-5 lg:h-[1.2vw] lg:w-[1.2vw] stroke-[2.5] transition-transform duration-200 group-hover:translate-x-0.5"
+                />
+              </button>
+            </div>
           </div>
         </div>
 

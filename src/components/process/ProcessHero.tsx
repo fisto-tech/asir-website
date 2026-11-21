@@ -267,7 +267,7 @@ export function ProcessHero() {
           ref={scrollCueRef}
           className="absolute bottom-8 inset-x-0 z-20 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-300"
         >
-          <div className="flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-4 py-2 text-xs font-mono tracking-widest text-white/80 backdrop-blur-md shadow-lg">
+          <div className="flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-4 py-2 text-xs font-display font-semibold tracking-wider text-white/80 backdrop-blur-md shadow-lg">
             <ChevronDown className="h-4 w-4 animate-bounce text-brand" />
             <span>SCROLL TO EXPLORE PROCESS</span>
           </div>

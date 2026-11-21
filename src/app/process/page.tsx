@@ -25,6 +25,7 @@ export default function ProcessPage() {
       <CapabilitiesCardsSection />
       <OurCapabilities />
       <ColorCTA
+        className="!pt-3 sm:!pt-4 lg:!pt-[1.2vw] !pb-8 sm:!pb-10 lg:!pb-[2.5vw]"
         eyebrow="Quality Assurance & Custom Runs"
         heading="Looking for process validation or custom batches?"
         body={

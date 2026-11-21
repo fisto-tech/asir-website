@@ -56,9 +56,19 @@ export default function AuxiliariesPage() {
       />
       <AuxiliariesSection />
       <ColorCTA
+        sectionBg="bg-white"
         eyebrow="Plant Engineering"
         heading="Need custom mold temperature profiling or dedicated chilling capacity?"
-        body="Our engineering team configures dedicated chilling loops, multi-zone MTC balancing, and closed-circuit cooling for specialized industrial runs."
+        body={
+          <>
+            <span className="sm:block">
+              Our engineering team configures dedicated chilling loops, multi-zone MTC balancing,{" "}
+            </span>
+            <span className="sm:block">
+              and closed-circuit cooling for specialized industrial runs.
+            </span>
+          </>
+        }
         ctaLabel="Contact engineering"
         image="/images/facility/dispatch.jpg"
         imageAlt="ASIR Containers auxiliary floor and finished dispatch inventory"

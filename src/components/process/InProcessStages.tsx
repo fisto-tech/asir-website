@@ -244,7 +244,7 @@ export function InProcessStages() {
                       </div>
 
                       <span
-                        className={`font-mono text-[11px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-md transition-colors ${
+                        className={`font-display text-[11px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-md transition-colors ${
                           open ? "bg-slate-100 text-slate-800" : "text-slate-400 group-hover:text-slate-600"
                         }`}
                       >

@@ -366,6 +366,33 @@ const capabilitiesData: CapabilityItem[] = [
 
 const printingSubItems = capabilitiesData.filter((c) => c.category === "printing");
 
+const stepColorThemes = [
+  {
+    border: "border-blue-400/90 hover:border-[#194e9e]",
+    text: "text-[#194e9e]",
+  },
+  {
+    border: "border-amber-500/90 hover:border-amber-600",
+    text: "text-amber-600",
+  },
+  {
+    border: "border-emerald-500/90 hover:border-emerald-600",
+    text: "text-emerald-600",
+  },
+  {
+    border: "border-rose-500/90 hover:border-rose-600",
+    text: "text-rose-600",
+  },
+  {
+    border: "border-indigo-500/90 hover:border-indigo-600",
+    text: "text-indigo-600",
+  },
+  {
+    border: "border-sky-500/90 hover:border-sky-600",
+    text: "text-sky-600",
+  },
+];
+
 export function OurCapabilities() {
   const [activeId, setActiveId] = useState<CapabilityId>("injection-moulding");
   const [isPrintingOpen, setIsPrintingOpen] = useState(true);
@@ -438,7 +465,7 @@ export function OurCapabilities() {
     <section
       ref={sectionRef}
       id="capabilities"
-      className="relative bg-white py-8 sm:py-12 lg:py-[3.5vw] border-b border-slate-200/70"
+      className="relative bg-white pt-6 sm:pt-8 lg:pt-[2vw] pb-8 sm:pb-10 lg:pb-[2.5vw]"
       aria-label="Capabilities Detail Breakdown"
     >
       <div className="shell relative z-10 max-w-[1440px] lg:max-w-[92vw] px-5 sm:px-8 lg:px-[4vw]">
@@ -446,18 +473,24 @@ export function OurCapabilities() {
         {/* ===================================================================
             TWO-COLUMN ARCHITECTURE:
             - Left: Narrow Sticky Text Navbar with Main Headings & Printing Dropdown
-            - Center: Crisp Dividing Line (lg:border-r)
+            - Center: Crisp Dividing Line (full height from top to bottom)
             - Right: Active Selected Capability Content (ONLY That Content Displays)
             =================================================================== */}
-        <div className="grid items-start lg:grid-cols-12 gap-8 lg:gap-0">
+        <div className="relative grid items-start lg:grid-cols-12 gap-8 lg:gap-0">
           
+          {/* Full-Height Column Divider (Spans 100% of the section height from top to bottom with high visibility) */}
+          <div
+            aria-hidden="true"
+            className="hidden lg:block absolute top-0 bottom-0 left-[25%] w-[2px] bg-slate-300 pointer-events-none"
+          />
+
           {/* ===================================================================
               LEFT SIDEBAR: Narrow, Sticky, Text-Only Navigation
               - Starts at the top (aligned with content title in the blue box position)
               - Pins at top-[84px] throughout the right content scroll
               - Naturally unpins when the right-side content reaches the end
               =================================================================== */}
-          <aside className="lg:col-span-3 xl:col-span-3 lg:sticky lg:top-[5.5vw] lg:self-start lg:border-r lg:border-slate-200/90 lg:pr-[2vw] pb-6 lg:pb-[3vw] pt-1">
+          <aside className="lg:col-span-3 xl:col-span-3 lg:sticky lg:top-[5.5vw] lg:self-start lg:pr-[2vw] pb-6 lg:pb-[3vw] pt-1">
             <nav
               aria-label="Capabilities Navigation"
               className="flex flex-col gap-1.5 lg:gap-[0.4vw]"
@@ -506,9 +539,9 @@ export function OurCapabilities() {
                   />
                 </button>
 
-                {/* Sub-Headings inside Printing Dropdown (Distinct Sub-Tab Style) */}
+                {/* Sub-Headings inside Printing Dropdown (Distinct Sub-Tab Style with high-visibility blue accent line) */}
                 {isPrintingOpen && (
-                  <div className="ml-3 pl-3.5 border-l-2 border-slate-200/80 space-y-1 lg:space-y-[0.3vw] mt-1.5 mb-1 transition-all duration-200">
+                  <div className="ml-3 pl-3.5 border-l-2 border-[#194e9e] space-y-1 lg:space-y-[0.3vw] mt-1.5 mb-1 transition-all duration-200">
                     {printingSubItems.map((sub) => {
                       const isSubActive = activeId === sub.id;
 
@@ -545,7 +578,7 @@ export function OurCapabilities() {
             <article className="pt-1">
               {/* 1. Header: Title, Tagline, Overview (Clean, No Card, No Kicker) */}
               <div>
-                <h3 className="font-display text-[2.2rem] sm:text-[2.75rem] lg:text-[2.8vw] font-extrabold tracking-tight text-ink leading-[1.08]">
+                <h3 className="font-display text-[2.2rem] sm:text-[2.75rem] lg:text-[2.8vw] font-bold tracking-tight text-ink leading-[1.08]">
                   {activeCapability.title}
                 </h3>
 
@@ -559,7 +592,7 @@ export function OurCapabilities() {
               </div>
 
               {/* 2. Showcase Image */}
-              <div className="mt-7 sm:mt-8 relative overflow-hidden rounded-2xl bg-slate-900 shadow-md">
+              <div className="mt-5 sm:mt-6 lg:mt-[1.3vw] relative overflow-hidden rounded-2xl bg-slate-900 shadow-md">
                 <div className="relative aspect-[16/9] w-full">
                   <Image
                     src={activeCapability.image}
@@ -573,50 +606,47 @@ export function OurCapabilities() {
               </div>
 
               {/* 3. How Does It Work (Process Steps) */}
-              <div className="mt-10 sm:mt-12 pt-8 sm:pt-10 border-t border-slate-200/70">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="h-[2px] w-5 bg-[#194e9e]" />
-                  <h4 className="font-display text-[18px] sm:text-[20px] font-bold text-[#194e9e] tracking-tight">
-                    {activeCapability.stepsHeading}
-                  </h4>
-                </div>
+              <div className="mt-6 sm:mt-7 lg:mt-[1.6vw] pt-5 sm:pt-6 lg:pt-[1.4vw] border-t border-slate-200/70">
+                <h4 className="font-display text-[22px] sm:text-[25px] lg:text-[28px] font-bold text-[#194e9e] tracking-tight mb-3 sm:mb-3.5 lg:mb-[0.8vw]">
+                  {activeCapability.stepsHeading}
+                </h4>
 
                 <div className="grid gap-3 sm:gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
-                  {activeCapability.steps.map((step) => (
-                    <div
-                      key={step.number}
-                      className="group relative rounded-xl border border-slate-200/80 bg-slate-50/70 p-4 transition-all duration-300 hover:border-slate-300 hover:bg-white hover:shadow-xs"
-                    >
-                      <span className="font-mono text-[12px] font-bold text-brand block mb-1.5">
-                        STEP {step.number}
-                      </span>
-                      <h5 className="font-display text-[15px] font-bold text-ink leading-snug">
-                        {step.title}
-                      </h5>
-                      <p className="mt-1.5 text-[13px] leading-relaxed text-slate-600 font-normal">
-                        {step.description}
-                      </p>
-                    </div>
-                  ))}
+                  {activeCapability.steps.map((step, sIdx) => {
+                    const theme = stepColorThemes[sIdx % stepColorThemes.length];
+                    return (
+                      <div
+                        key={step.number}
+                        className={`group relative rounded-xl border-[1.5px] ${theme.border} bg-white p-4 transition-all duration-300 hover:shadow-xs`}
+                      >
+                        <span className={`font-display text-[12px] font-bold uppercase tracking-wider ${theme.text} block mb-1.5`}>
+                          STEP {step.number}
+                        </span>
+                        <h5 className="font-display text-[15px] font-bold text-ink leading-snug">
+                          {step.title}
+                        </h5>
+                        <p className="mt-1.5 text-[13px] leading-relaxed text-slate-600 font-normal">
+                          {step.description}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* 4. Key Highlights & Advantages */}
-              <div className="mt-10 sm:mt-12 pt-8 sm:pt-10 border-t border-slate-200/70">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="h-[2px] w-5 bg-[#194e9e]" />
-                  <h4 className="font-display text-[18px] sm:text-[20px] font-bold text-[#194e9e] tracking-tight">
-                    {activeCapability.benefitsHeading}
-                  </h4>
-                </div>
+              <div className="mt-6 sm:mt-7 lg:mt-[1.6vw] pt-5 sm:pt-6 lg:pt-[1.4vw] border-t border-slate-200/70">
+                <h4 className="font-display text-[22px] sm:text-[25px] lg:text-[28px] font-bold text-[#194e9e] tracking-tight mb-3 sm:mb-3.5 lg:mb-[0.8vw]">
+                  {activeCapability.benefitsHeading}
+                </h4>
 
-                <div className="grid gap-3.5 sm:grid-cols-2">
+                <div className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
                   {activeCapability.benefits.map((b) => {
                     const BIcon = b.icon;
                     return (
                       <div
                         key={b.title}
-                        className="flex items-start gap-3.5 rounded-xl border border-slate-200/70 bg-slate-50/50 p-4"
+                        className="flex items-center gap-3.5 py-1"
                       >
                         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
                           <BIcon className="h-5 w-5" strokeWidth={2.1} />
@@ -637,24 +667,21 @@ export function OurCapabilities() {
 
               {/* 5. IML vs Traditional Comparison Table (IML only) */}
               {activeCapability.comparisonTable && (
-                <div className="mt-10 sm:mt-12 pt-8 sm:pt-10 border-t border-slate-200/70">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="h-[2px] w-5 bg-[#194e9e]" />
-                    <h4 className="font-display text-[18px] sm:text-[20px] font-bold text-[#194e9e] tracking-tight">
-                      IML vs Traditional Labelling
-                    </h4>
-                  </div>
+                <div className="mt-6 sm:mt-7 lg:mt-[1.6vw] pt-5 sm:pt-6 lg:pt-[1.4vw] border-t border-slate-200/70">
+                  <h4 className="font-display text-[22px] sm:text-[25px] lg:text-[28px] font-bold text-[#194e9e] tracking-tight mb-3 sm:mb-3.5 lg:mb-[0.8vw]">
+                    IML vs Traditional Labelling
+                  </h4>
 
-                  <div className="overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-2xs">
+                  <div className="overflow-x-auto rounded-2xl border-[1.5px] border-slate-300 bg-white shadow-2xs">
                     <table className="w-full text-left border-collapse text-[13.5px]">
                       <thead>
-                        <tr className="border-b border-slate-200 bg-slate-50/80 font-mono text-[12px] uppercase text-slate-600">
+                        <tr className="border-b-[1.5px] border-slate-300 bg-slate-50/80 font-display text-[12.5px] font-bold uppercase tracking-wider text-slate-700">
                           <th className="p-3.5 sm:p-4 font-bold">Feature</th>
                           <th className="p-3.5 sm:p-4 font-bold text-emerald-700">In-Mould Labelling (IML)</th>
-                          <th className="p-3.5 sm:p-4 font-bold text-slate-500">Traditional Labelling</th>
+                          <th className="p-3.5 sm:p-4 font-bold text-slate-600">Traditional Labelling</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y-[1.5px] divide-slate-200/80">
                         {activeCapability.comparisonTable.map((row) => (
                           <tr key={row.feature} className="hover:bg-slate-50/50 transition-colors">
                             <td className="p-3.5 sm:p-4 font-bold text-ink">{row.feature}</td>
@@ -671,13 +698,10 @@ export function OurCapabilities() {
               )}
 
               {/* 6. Typical Applications Checklist */}
-              <div className="mt-10 sm:mt-12 pt-8 sm:pt-10 border-t border-slate-200/70">
-                <div className="flex items-center gap-2 mb-3.5">
-                  <span className="h-[2px] w-5 bg-[#194e9e]" />
-                  <h4 className="font-display text-[17px] sm:text-[18.5px] font-bold text-[#194e9e] tracking-tight">
-                    Typical Packaging Applications
-                  </h4>
-                </div>
+              <div className="mt-6 sm:mt-7 lg:mt-[1.6vw] pt-5 sm:pt-6 lg:pt-[1.4vw] border-t border-slate-200/70">
+                <h4 className="font-display text-[22px] sm:text-[25px] lg:text-[28px] font-bold text-[#194e9e] tracking-tight mb-3 sm:mb-3.5 lg:mb-[0.8vw]">
+                  Typical Packaging Applications
+                </h4>
 
                 <ul className="grid gap-2.5 sm:grid-cols-2">
                   {activeCapability.applications.map((app) => (
@@ -694,18 +718,10 @@ export function OurCapabilities() {
 
               {/* 7. Approved Client Badges */}
               {activeCapability.clientLogos && activeCapability.clientLogos.length > 0 && (
-                <div className="mt-10 sm:mt-12 pt-8 sm:pt-10 border-t border-slate-200/70">
-                  <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="h-[2px] w-5 bg-[#194e9e]" />
-                      <h4 className="font-display text-[16.5px] sm:text-[18px] font-bold text-[#194e9e] tracking-tight">
-                        Trusted by Leading Brands for {activeCapability.tabLabel}
-                      </h4>
-                    </div>
-                    <span className="font-mono text-[11px] font-semibold text-slate-400">
-                      Approved Commercial Batches
-                    </span>
-                  </div>
+                <div className="mt-6 sm:mt-7 lg:mt-[1.6vw] pt-5 sm:pt-6 lg:pt-[1.4vw] border-t border-slate-200/70">
+                  <h4 className="font-display text-[22px] sm:text-[25px] lg:text-[28px] font-bold text-[#194e9e] tracking-tight mb-3 sm:mb-3.5 lg:mb-[0.8vw]">
+                    Trusted by Leading Brands for {activeCapability.tabLabel}
+                  </h4>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
                     {activeCapability.clientLogos.map((client) => (

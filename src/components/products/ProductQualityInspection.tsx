@@ -13,6 +13,9 @@ type InspectionStage = {
   tileBg: string;
   tileColor: string;
   activeBar: string;
+  defaultBg: string;
+  defaultBorder: string;
+  activeBorder: string;
   heading: string;
   content: string;
   activities: string[];
@@ -28,6 +31,9 @@ const inspectionStages: InspectionStage[] = [
     tileBg: "bg-emerald-50",
     tileColor: "text-emerald-600",
     activeBar: "bg-emerald-600",
+    defaultBg: "bg-emerald-50/60",
+    defaultBorder: "border-emerald-300",
+    activeBorder: "border-emerald-300",
     heading: "Ensuring Quality from the Start",
     content:
       "All incoming raw materials and components are thoroughly inspected before entering the production process. Our incoming quality inspection ensures that materials meet specified requirements, approved specifications, and applicable quality standards before acceptance.",
@@ -49,6 +55,9 @@ const inspectionStages: InspectionStage[] = [
     tileBg: "bg-sky-50",
     tileColor: "text-sky-600",
     activeBar: "bg-sky-600",
+    defaultBg: "bg-sky-50/60",
+    defaultBorder: "border-sky-300",
+    activeBorder: "border-sky-300",
     heading: "Maintaining Quality at Every Production Stage",
     content:
       "In-process inspection is carried out throughout the manufacturing process to monitor product quality, maintain production consistency, and identify potential defects at an early stage. Regular inspections help ensure that every production stage follows defined quality requirements and manufacturing specifications.",
@@ -68,9 +77,12 @@ const inspectionStages: InspectionStage[] = [
     id: "finished-goods",
     tabLabel: "Finished Goods (FG)",
     icon: ClipboardCheck,
-    tileBg: "bg-amber-50",
-    tileColor: "text-amber-600",
-    activeBar: "bg-amber-600",
+    tileBg: "bg-orange-50",
+    tileColor: "text-orange-600",
+    activeBar: "bg-orange-500",
+    defaultBg: "bg-orange-50/60",
+    defaultBorder: "border-orange-300",
+    activeBorder: "border-orange-300",
     heading: "Delivering Quality-Approved Products",
     content:
       "Finished Goods Inspection is the final quality verification process conducted before products are approved for packaging, storage, and dispatch. Each finished product is evaluated against defined quality standards to ensure it meets customer specifications and delivery requirements.",
@@ -88,7 +100,7 @@ const inspectionStages: InspectionStage[] = [
   },
 ];
 
-export function ProductQualityInspection() {
+export function ProductQualityInspection({ className = "" }: { className?: string } = {}) {
   const pathname = usePathname();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
@@ -169,7 +181,7 @@ export function ProductQualityInspection() {
   return (
     <section
       ref={rootRef}
-      className="relative overflow-hidden bg-white py-6 sm:py-8 lg:py-[3vw] border-t border-slate-200/60"
+      className={`relative overflow-hidden bg-white pt-6 sm:pt-8 lg:pt-[2.2vw] pb-2 sm:pb-3 lg:pb-[0.8vw] border-t border-slate-200/60 ${className}`}
       aria-labelledby="quality-inspection-heading"
     >
       <div className="shell max-w-[1440px] lg:max-w-[92vw] px-5 sm:px-8 lg:px-[4vw]">
@@ -182,7 +194,7 @@ export function ProductQualityInspection() {
                 <span className="h-[2px] lg:h-[0.14vw] w-6 lg:w-[1.6vw] bg-[#194e9e]" />
                 <h2
                   id="quality-inspection-heading"
-                  className="font-mono text-[12px] sm:text-[13px] lg:text-[0.85vw] font-bold uppercase tracking-[0.2em] text-[#194e9e]"
+                  className="font-display text-[12px] sm:text-[13px] lg:text-[0.85vw] font-bold uppercase tracking-[0.2em] text-[#194e9e]"
                 >
                   Quality Control
                 </h2>
@@ -198,7 +210,7 @@ export function ProductQualityInspection() {
               <div className="mt-4 sm:mt-5 lg:mt-[1.2vw] border-t border-slate-200/80 pt-3 sm:pt-3.5 lg:pt-[0.9vw] min-w-0 w-full">
                 <div className="flex items-center gap-2.5 lg:gap-[0.6vw] mb-2.5 sm:mb-3 lg:mb-[0.7vw]">
                   <span className="h-[2px] lg:h-[0.14vw] w-6 lg:w-[1.6vw] bg-emerald-600" />
-                  <h3 className="font-mono text-[12px] sm:text-[13px] lg:text-[0.85vw] font-bold uppercase tracking-[0.2em] text-emerald-600">
+                  <h3 className="font-display text-[12px] sm:text-[13px] lg:text-[0.85vw] font-bold uppercase tracking-[0.2em] text-emerald-600">
                     Inspection
                   </h3>
                 </div>
@@ -213,32 +225,34 @@ export function ProductQualityInspection() {
                       key={item.id}
                       type="button"
                       onClick={() => handleTabClick(idx)}
-                      className={`group relative flex items-center gap-2.5 sm:gap-3 lg:gap-[0.6vw] rounded-xl lg:rounded-[0.7vw] p-2.5 sm:p-3 lg:p-[0.7vw] text-left transition-all duration-200 cursor-pointer min-w-0 w-full ${
+                      className={`group relative flex items-center gap-2.5 sm:gap-3 lg:gap-[0.6vw] rounded-xl lg:rounded-[0.7vw] p-2.5 sm:p-3 lg:p-[0.7vw] text-left transition-all duration-200 cursor-pointer min-w-0 w-full overflow-hidden ${
                         isActive
-                          ? "bg-slate-50 shadow-2xs ring-1 ring-slate-200/90"
-                          : "hover:bg-slate-50/60"
+                          ? `bg-white shadow-2xs border ${item.activeBorder}`
+                          : `${item.defaultBg} border ${item.defaultBorder} hover:bg-white hover:shadow-2xs`
                       }`}
                     >
                       {/* Icon container */}
                       <span
-                        className={`flex h-9 w-9 sm:h-10 sm:w-10 lg:h-[2.4vw] lg:w-[2.4vw] shrink-0 items-center justify-center rounded-[10px] lg:rounded-[0.6vw] transition-transform duration-300 group-hover:scale-105 ${item.tileBg} ${item.tileColor}`}
+                        className={`flex h-9 w-9 sm:h-10 sm:w-10 lg:h-[2.4vw] lg:w-[2.4vw] shrink-0 items-center justify-center rounded-[10px] lg:rounded-[0.6vw] transition-transform duration-300 group-hover:scale-105 ${
+                          isActive ? item.tileBg : "bg-white shadow-2xs"
+                        } ${item.tileColor}`}
                       >
                         <Icon aria-hidden className="h-4.5 w-4.5 sm:h-5 sm:w-5 lg:h-[1.2vw] lg:w-[1.2vw]" strokeWidth={2} />
                       </span>
 
                       {/* Sub-tab text on the SAME line */}
                       <span
-                        className={`font-outfit text-[12.5px] sm:text-[13px] lg:text-[0.9vw] font-bold leading-tight transition-colors min-w-0 flex-1 truncate sm:whitespace-normal ${
-                          isActive ? "text-ink" : "text-slate-600 group-hover:text-ink"
+                        className={`font-display text-[12.5px] sm:text-[13px] lg:text-[0.9vw] font-bold leading-tight transition-colors min-w-0 flex-1 truncate sm:whitespace-normal ${
+                          isActive ? "text-slate-900" : "text-slate-800 group-hover:text-slate-900"
                         }`}
                       >
                         {item.tabLabel}
                       </span>
 
-                      {/* Active bottom indicator bar */}
+                      {/* Active bottom border style */}
                       {isActive && (
                         <span
-                          className={`absolute bottom-0 left-2.5 right-2.5 lg:left-[0.6vw] lg:right-[0.6vw] h-[2.5px] lg:h-[0.16vw] rounded-full ${item.activeBar}`}
+                          className={`absolute bottom-0 inset-x-0 h-[3px] lg:h-[0.2vw] ${item.activeBar}`}
                         />
                       )}
                     </button>
@@ -252,18 +266,18 @@ export function ProductQualityInspection() {
             <div
               data-stage-panel
               key={stage.id}
-              className="mt-4 sm:mt-5 lg:mt-[1.2vw] rounded-2xl lg:rounded-[1.2vw] border border-slate-200/70 bg-[#faf8f5]/80 p-4 sm:p-5 lg:p-[1.4vw] min-w-0 w-full font-outfit"
+              className="mt-4 sm:mt-5 lg:mt-[1.2vw] rounded-2xl lg:rounded-[1.2vw] border border-slate-200/70 bg-[#faf8f5]/80 p-4 sm:p-5 lg:p-[1.4vw] min-w-0 w-full"
             >
               <div className="flex flex-wrap items-center justify-between gap-2 lg:gap-[0.5vw]">
-                <h3 className="font-outfit text-[16px] sm:text-[18px] lg:text-[1.25vw] font-bold tracking-tight text-ink">
+                <h3 className="font-display text-[16px] sm:text-[18px] lg:text-[1.25vw] font-bold tracking-tight text-ink">
                   {stage.heading}
                 </h3>
-                <span className="font-outfit text-[11px] sm:text-[12px] lg:text-[0.78vw] font-bold text-slate-500 bg-slate-200/60 px-2.5 py-0.5 rounded-full">
+                <span className="text-[11px] sm:text-[12px] lg:text-[0.78vw] font-bold text-slate-500 bg-slate-200/60 px-2.5 py-0.5 rounded-full">
                   {stage.activities.length} Checks
                 </span>
               </div>
 
-              <p className="mt-2.5 lg:mt-[0.6vw] font-outfit text-[14px] sm:text-[15px] lg:text-[1vw] leading-relaxed text-slate-600 break-words font-normal">
+              <p className="mt-2.5 lg:mt-[0.6vw] text-[14px] sm:text-[15px] lg:text-[1vw] leading-relaxed text-slate-600 break-words font-normal">
                 {stage.content}
               </p>
 
@@ -271,7 +285,7 @@ export function ProductQualityInspection() {
                 {stage.activities.map((act) => (
                   <li
                     key={act}
-                    className="flex items-start gap-2.5 lg:gap-[0.5vw] font-outfit text-[13px] sm:text-[14px] lg:text-[0.92vw] font-medium text-slate-700 min-w-0"
+                    className="flex items-start gap-2.5 lg:gap-[0.5vw] text-[13px] sm:text-[14px] lg:text-[0.92vw] font-medium text-slate-700 min-w-0"
                   >
                     <CheckCircle2
                       className="h-4 w-4 lg:h-[1vw] lg:w-[1vw] text-emerald-600 shrink-0 mt-0.5"

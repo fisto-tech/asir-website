@@ -24,7 +24,7 @@ export function QualityStatement() {
           <div className="flex flex-col justify-center lg:col-span-7">
             <div data-reveal data-reveal-dir="left" data-reveal-delay="0.1" className="flex items-center gap-2">
               <span className="h-[2px] w-5 bg-emerald-accent" />
-              <p className="font-mono text-[11.5px] font-bold uppercase tracking-[0.2em] text-emerald-accent">
+              <p className="font-display text-[11.5px] font-bold uppercase tracking-[0.2em] text-emerald-accent">
                 QUALITY ASSURANCE
               </p>
             </div>

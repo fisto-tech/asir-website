@@ -56,9 +56,19 @@ export default function ProductionMachineriesPage() {
       />
       <ProductionMachineriesSection />
       <ColorCTA
+        sectionBg="bg-gradient-to-r from-[#d8eeff] via-[#e4ecf2] to-[#d8eeff]"
         eyebrow="Production Capacity"
         heading="Have volume requirements or specific machine tooling?"
-        body="Inquire about machine allocation, multi-cavity tooling, cycle times, and automated in-mould labelling capabilities."
+        body={
+          <>
+            <span className="sm:block">
+              Inquire about machine allocation, multi-cavity tooling, cycle times,{" "}
+            </span>
+            <span className="sm:block">
+              and automated in-mould labelling capabilities.
+            </span>
+          </>
+        }
         ctaLabel="Inquire capacity"
         image="/images/facility/labelling.jpg"
         imageAlt="Containers moving along the in-house printing and labelling line"
