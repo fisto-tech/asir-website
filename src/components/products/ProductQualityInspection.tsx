@@ -272,9 +272,7 @@ export function ProductQualityInspection({ className = "" }: { className?: strin
                 <h3 className="font-display text-[16px] sm:text-[18px] lg:text-[1.25vw] font-bold tracking-tight text-ink">
                   {stage.heading}
                 </h3>
-                <span className="text-[11px] sm:text-[12px] lg:text-[0.78vw] font-bold text-slate-500 bg-slate-200/60 px-2.5 py-0.5 rounded-full">
-                  {stage.activities.length} Checks
-                </span>
+                
               </div>
 
               <p className="mt-2.5 lg:mt-[0.6vw] text-[14px] sm:text-[15px] lg:text-[1vw] leading-relaxed text-slate-600 break-words font-normal">
