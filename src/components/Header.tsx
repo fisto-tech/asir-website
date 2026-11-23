@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -10,70 +10,96 @@ import { Button } from "@/components/ui/Button";
 import { navigation, site } from "@/data/site";
 import { products } from "@/data/products";
 
-// Product display configuration matching reference card design
+// Product display configuration matching reference card design (using optimized nav-thumbs)
 const navProductItems = [
-  { slug: "500ml-paint-pail-p2", title: "500ml", code: "P/2", img: "/images/products/product-images/500ml.webp" },
-  { slug: "1l-paint-pail-p1a", title: "1 Litre", code: "P1a", img: "/images/products/product-images/1ltr.webp" },
-  { slug: "1l-paint-pail-p1b", title: "1 Litre", code: "P1b", img: "/images/products/product-images/1ltr.webp" },
-  { slug: "4l-paint-pail-p4", title: "4 Litre", code: "P4", img: "/images/products/product-images/4ltr.webp" },
-  { slug: "10l-paint-pail-p10", title: "10 Litre", code: "P10p", img: "/images/products/product-images/10ltr.webp" },
-  { slug: "20l-paint-pail-p20a", title: "20 Litre", code: "P20ap", img: "/images/products/product-images/20Ltr.webp" },
-  { slug: "20l-paint-pail-p20b", title: "20 Litre", code: "P20bp", img: "/images/products/product-images/20Ltr.webp" },
-  { slug: "1kg-storage-pail-k1", title: "1 Kg", code: "K1", img: "/images/products/product-images/1kg.webp" },
-  { slug: "2kg-storage-pail-k2", title: "2 Kg", code: "K2", img: "/images/products/product-images/2kg.webp" },
-  { slug: "5kg-storage-pail-k5", title: "5 Kg", code: "K5", img: "/images/products/product-images/5kg.webp" },
-  { slug: "10kg-storage-pail-k10", title: "10 Kg", code: "K10p", img: "/images/products/product-images/10kg.webp" },
-  { slug: "20kg-storage-pail-k20", title: "20 Kg", code: "K20p", img: "/images/products/product-images/20kg.webp" },
-  { slug: "5l-round-pail-a5", title: "5 litre round", code: "A5", img: "/images/products/product-images/5ltr.webp" },
-  { slug: "5l-square-interlock-pail-f5", title: "5 Litre square", code: "F5p", img: "/images/products/product-images/5kgsquare.webp" },
-  { slug: "17l-square-interlock-pail-f17i", title: "17 Litre interlock", code: "F17ip", img: "/images/products/product-images/17kgsquare.webp" },
-  { slug: "17l-square-outer-lock-pail-f17o", title: "17 Litre outer lock", code: "F17op", img: "/images/products/product-images/17kgsquaarelock.webp" },
-  { slug: "15l-square-interlock-pail-f15", title: "15 Litre Interlock", code: "F15p", img: "/images/products/product-images/15ltr.webp" },
+  { slug: "500ml-paint-pail-p2", title: "500ml", code: "P/2", img: "/images/products/nav-thumbs/500ml.webp" },
+  { slug: "1l-paint-pail-p1a", title: "1 Litre", code: "P1a", img: "/images/products/nav-thumbs/1ltr.webp" },
+  { slug: "1l-paint-pail-p1b", title: "1 Litre", code: "P1b", img: "/images/products/nav-thumbs/1ltr.webp" },
+  { slug: "4l-paint-pail-p4", title: "4 Litre", code: "P4", img: "/images/products/nav-thumbs/4ltr.webp" },
+  { slug: "10l-paint-pail-p10", title: "10 Litre", code: "P10p", img: "/images/products/nav-thumbs/10ltr.webp" },
+  { slug: "20l-paint-pail-p20a", title: "20 Litre", code: "P20ap", img: "/images/products/nav-thumbs/20Ltr.webp" },
+  { slug: "20l-paint-pail-p20b", title: "20 Litre", code: "P20bp", img: "/images/products/nav-thumbs/20Ltr.webp" },
+  { slug: "1kg-storage-pail-k1", title: "1 Kg", code: "K1", img: "/images/products/nav-thumbs/1kg.webp" },
+  { slug: "2kg-storage-pail-k2", title: "2 Kg", code: "K2", img: "/images/products/nav-thumbs/2kg.webp" },
+  { slug: "5kg-storage-pail-k5", title: "5 Kg", code: "K5", img: "/images/products/nav-thumbs/5kg.webp" },
+  { slug: "10kg-storage-pail-k10", title: "10 Kg", code: "K10p", img: "/images/products/nav-thumbs/10kg.webp" },
+  { slug: "20kg-storage-pail-k20", title: "20 Kg", code: "K20p", img: "/images/products/nav-thumbs/20kg.webp" },
+  { slug: "5l-round-pail-a5", title: "5 litre round", code: "A5", img: "/images/products/nav-thumbs/5ltr.webp" },
+  { slug: "5l-square-interlock-pail-f5", title: "5 Litre square", code: "F5p", img: "/images/products/nav-thumbs/5kgsquare.webp" },
+  { slug: "17l-square-interlock-pail-f17i", title: "17 Litre interlock", code: "F17ip", img: "/images/products/nav-thumbs/17kgsquare.webp" },
+  { slug: "17l-square-outer-lock-pail-f17o", title: "17 Litre outer lock", code: "F17op", img: "/images/products/nav-thumbs/17kgsquaarelock.webp" },
+  { slug: "15l-square-interlock-pail-f15", title: "15 Litre Interlock", code: "F15p", img: "/images/products/nav-thumbs/15ltr.webp" },
 ];
 
-function DropdownProductImage({
-  src,
-  alt,
-  shouldLoad,
-  onLoaded,
+function DropdownProductItem({
+  item,
+  onNavigate,
 }: {
-  src: string;
-  alt: string;
-  shouldLoad: boolean;
-  onLoaded?: () => void;
+  item: {
+    slug: string;
+    title: string;
+    code: string;
+    img: string;
+  };
+  onNavigate: (href: string, e?: React.MouseEvent) => void;
 }) {
   const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+
+  // Fix missed-onLoad bug: if image is already cached/complete on mount, reveal immediately
+  useEffect(() => {
+    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+      setLoaded(true);
+    }
+  }, []);
 
   return (
-    <div className="relative flex h-11 w-11 lg:h-[3vw] lg:w-[3vw] shrink-0 items-center justify-center rounded-xl lg:rounded-[0.7vw] bg-slate-100 group-hover:bg-white transition-all duration-300 shadow-2xs overflow-hidden">
-      {/* Sleek Skeleton Pulse Shimmer for Image Only */}
-      {!loaded && (
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-r from-slate-200/90 via-slate-100/95 to-slate-200/90 animate-pulse rounded-xl lg:rounded-[0.7vw]"
-        />
-      )}
-      {shouldLoad && (
-        <Image
-          src={src}
-          alt={alt}
-          width={44}
-          height={44}
-          loading="eager"
-          onLoad={() => {
-            setLoaded(true);
-            onLoaded?.();
-          }}
-          onError={() => {
-            setLoaded(true);
-            onLoaded?.();
-          }}
-          className={`relative z-10 max-h-10 lg:max-h-[2.6vw] w-auto object-contain transition-opacity duration-300 group-hover:scale-105 ${
-            loaded ? "opacity-100" : "opacity-0"
-          }`}
-        />
-      )}
-    </div>
+    <Link
+      href={`/products/${item.slug}`}
+      onClick={(e) => onNavigate(`/products/${item.slug}`, e)}
+      className="group relative flex h-[62px] lg:h-[4.2vw] items-center justify-between rounded-2xl lg:rounded-[1vw] border-[1.5px] border-blue-200/90 hover:border-brand bg-white hover:bg-brand px-3 lg:px-[0.8vw] py-2 lg:py-[0.5vw] transition-all duration-300 hover:shadow-md cursor-pointer"
+    >
+      <div className="flex items-center gap-3 lg:gap-[0.7vw] min-w-0 pr-1 flex-1">
+        {/* Small Image Area Skeleton (pulse overlay disappears once image loads) */}
+        <div className="relative flex h-11 w-11 lg:h-[3vw] lg:w-[3vw] shrink-0 items-center justify-center rounded-xl lg:rounded-[0.7vw] bg-slate-100 group-hover:bg-white transition-all duration-300 shadow-2xs overflow-hidden">
+          {!loaded && (
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-gradient-to-r from-slate-200/90 via-slate-100/95 to-slate-200/90 animate-pulse rounded-xl lg:rounded-[0.7vw]"
+            />
+          )}
+          <Image
+            ref={imgRef}
+            src={item.img}
+            alt={item.title}
+            width={120}
+            height={120}
+            sizes="(min-width:1024px) 3vw, 44px"
+            unoptimized
+            onLoad={() => setLoaded(true)}
+            onError={() => setLoaded(true)}
+            className={`relative z-10 max-h-10 lg:max-h-[2.6vw] w-auto object-contain transition-opacity duration-300 group-hover:scale-105 ${
+              loaded ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        </div>
+
+        {/* Title & Code: Always immediately visible with no opacity gating and no skeleton lines */}
+        <div className="flex flex-col min-w-0 justify-center flex-1">
+          <span className="text-[12.5px] lg:text-[0.84vw] font-semibold leading-tight text-slate-800 group-hover:text-white transition-colors duration-300 truncate">
+            {item.title}
+          </span>
+          <span className="text-[11px] lg:text-[0.72vw] font-normal text-slate-400 group-hover:text-blue-100 transition-colors duration-300 mt-0.5">
+            Code : {item.code}
+          </span>
+        </div>
+      </div>
+
+      {/* Action Chevron: Always final styled state */}
+      <div className="flex h-7 w-7 lg:h-[1.9vw] lg:w-[1.9vw] shrink-0 items-center justify-center rounded-full border border-brand bg-brand text-white group-hover:bg-white group-hover:border-white group-hover:text-brand transition-all duration-300 group-hover:translate-x-0.5 shadow-2xs">
+        <ChevronRight className="h-3 w-3 lg:h-[0.78vw] lg:w-[0.78vw] stroke-[2.5]" />
+      </div>
+    </Link>
   );
 }
 
@@ -87,7 +113,6 @@ export function Header() {
   const [machineriesOpen, setMachineriesOpen] = useState(false);
   const [mobileMachineriesOpen, setMobileMachineriesOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [currentLoadIndex, setCurrentLoadIndex] = useState(0);
   const closeTimer = useRef<number | null>(null);
   const machineriesCloseTimer = useRef<number | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
@@ -96,6 +121,38 @@ export function Header() {
   const machineriesNavRef = useRef<HTMLDivElement | null>(null);
   const modalRef = useRef<HTMLDivElement | null>(null);
   const machineriesDropdownRef = useRef<HTMLDivElement | null>(null);
+  const preloadedRef = useRef(false);
+
+  // Preload unique nav product thumbnail images before the user opens the dropdown
+  const preloadProductImages = useCallback(() => {
+    if (preloadedRef.current || typeof window === "undefined") return;
+    preloadedRef.current = true;
+    const uniqueImages = Array.from(new Set(navProductItems.map((item) => item.img)));
+    uniqueImages.forEach((src) => {
+      const img = new window.Image();
+      img.src = src;
+    });
+  }, []);
+
+  // Idle preload of product thumbnails
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const win = window as unknown as {
+      requestIdleCallback?: (cb: () => void) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    if (typeof win.requestIdleCallback === "function") {
+      const handle = win.requestIdleCallback(preloadProductImages);
+      return () => {
+        if (typeof win.cancelIdleCallback === "function") {
+          win.cancelIdleCallback(handle);
+        }
+      };
+    } else {
+      const timer = setTimeout(preloadProductImages, 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [preloadProductImages]);
 
   // Close all open dropdowns/drawers cleanly
   const closeAllMenus = () => {
@@ -132,15 +189,6 @@ export function Header() {
       router.prefetch("/contact");
     } catch {}
   }, [router]);
-
-  // Progressive one-by-one sequential image loader safeguard timer
-  useEffect(() => {
-    if (currentLoadIndex >= navProductItems.length) return;
-    const timer = setTimeout(() => {
-      setCurrentLoadIndex((prev) => prev + 1);
-    }, 200);
-    return () => clearTimeout(timer);
-  }, [currentLoadIndex]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -304,6 +352,8 @@ export function Header() {
                     <div className="group flex items-center gap-1 lg:gap-[0.2vw]">
                       <Link
                         href={item.href}
+                        onMouseEnter={preloadProductImages}
+                        onFocus={preloadProductImages}
                         onClick={(e) => {
                           setProductsOpen(false);
                           navigateTo(item.href, e);
@@ -326,6 +376,8 @@ export function Header() {
                         aria-expanded={productsOpen}
                         aria-controls="products-menu"
                         aria-label={productsOpen ? "Close products menu" : "Open products menu"}
+                        onMouseEnter={preloadProductImages}
+                        onFocus={preloadProductImages}
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -427,8 +479,8 @@ export function Header() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
                               <span
-                                className={`font-display text-[12.5px] lg:text-[0.84vw] font-bold transition-colors ${
-                                  isProductionActive ? "text-brand" : "text-slate-900 group-hover:text-brand"
+                                className={`text-[15px] xl:text-[15.5px] lg:text-[1.05vw] font-medium tracking-tight transition-colors ${
+                                  isProductionActive ? "text-brand" : "text-slate-800 group-hover:text-brand"
                                 }`}
                               >
                                 Production machineries
@@ -479,8 +531,8 @@ export function Header() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
                               <span
-                                className={`font-display text-[12.5px] lg:text-[0.84vw] font-bold transition-colors ${
-                                  isAuxiliariesActive ? "text-brand" : "text-slate-900 group-hover:text-brand"
+                                className={`text-[15px] xl:text-[15.5px] lg:text-[1.05vw] font-medium tracking-tight transition-colors ${
+                                  isAuxiliariesActive ? "text-brand" : "text-slate-800 group-hover:text-brand"
                                 }`}
                               >
                                 Auxiliaries
@@ -536,8 +588,8 @@ export function Header() {
           {/* Desktop Right CTAs */}
           <div className="hidden items-center gap-5 xl:gap-6 lg:gap-[1.5vw] lg:flex">
             <a
-              href="#"
-              target="_blank"
+              href=""
+              target=""
               rel="noopener noreferrer"
               className={`link-rule group inline-flex items-center gap-1.5 lg:gap-[0.35vw] text-[14.5px] xl:text-[15px] lg:text-[1vw] font-semibold tracking-tight transition-colors duration-200 cursor-pointer ${linkTone}`}
             >
@@ -605,35 +657,12 @@ export function Header() {
 
             {/* Responsive grid matching user reference UI */}
             <div className="mt-4 lg:mt-[1vw] grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2.5 lg:gap-[0.8vw] max-h-[60vh] lg:max-h-[30vw] overflow-y-auto pr-1">
-              {navProductItems.map((item, idx) => (
-                <Link
+              {navProductItems.map((item) => (
+                <DropdownProductItem
                   key={item.slug}
-                  href={`/products/${item.slug}`}
-                  onClick={(e) => navigateTo(`/products/${item.slug}`, e)}
-                  className="group relative flex h-[62px] lg:h-[4.2vw] items-center justify-between rounded-2xl lg:rounded-[1vw] border-[1.5px] border-blue-200/90 hover:border-brand bg-white hover:bg-brand px-3 lg:px-[0.8vw] py-2 lg:py-[0.5vw] transition-all duration-300 hover:shadow-md cursor-pointer"
-                >
-                  <div className="flex items-center gap-3 lg:gap-[0.7vw] min-w-0 pr-1">
-                    <DropdownProductImage
-                      src={item.img}
-                      alt={item.title}
-                      shouldLoad={idx <= currentLoadIndex}
-                      onLoaded={() => setCurrentLoadIndex((prev) => Math.max(prev, idx + 1))}
-                    />
-
-                    <div className="flex flex-col min-w-0">
-                      <span className="font-display text-[12.5px] lg:text-[0.84vw] font-bold leading-tight text-slate-900 group-hover:text-white transition-colors duration-300 truncate">
-                        {item.title}
-                      </span>
-                      <span className="text-[11px] lg:text-[0.72vw] font-normal text-slate-400 group-hover:text-blue-100 transition-colors duration-300 mt-0.5">
-                        Code : {item.code}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex h-7 w-7 lg:h-[1.9vw] lg:w-[1.9vw] shrink-0 items-center justify-center rounded-full border border-brand bg-brand text-white group-hover:bg-white group-hover:border-white group-hover:text-brand transition-all duration-300 group-hover:translate-x-0.5 shadow-2xs">
-                    <ChevronRight className="h-3 w-3 lg:h-[0.78vw] lg:w-[0.78vw] stroke-[2.5]" />
-                  </div>
-                </Link>
+                  item={item}
+                  onNavigate={navigateTo}
+                />
               ))}
             </div>
           </div>

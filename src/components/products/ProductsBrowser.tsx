@@ -124,6 +124,18 @@ export function ProductsBrowser() {
   const [hydrated, setHydrated] = useState(false);
   const gridRef = useRef<HTMLDivElement | null>(null);
 
+  // Immediately scroll to the top of the page whenever filters are used while scrolled down
+  const scrollToTop = useCallback(() => {
+    if (typeof window === "undefined") return;
+    if (window.scrollY > 40) {
+      const lenis = (window as unknown as { __lenis?: { scrollTo: (target: number, opts?: { immediate?: boolean }) => void } }).__lenis;
+      if (lenis) {
+        lenis.scrollTo(0, { immediate: true });
+      }
+      window.scrollTo({ top: 0, left: 0 });
+    }
+  }, []);
+
   const searchString = searchParams.toString();
 
   // Sync internal filter state whenever the URL search params change (e.g. clicking nav/footer links)
@@ -180,6 +192,7 @@ export function ProductsBrowser() {
   );
 
   const toggle = (key: FilterKey, value: string) => {
+    scrollToTop();
     setFilters((current) => {
       const values = current[key] as string[];
       const next = values.includes(value)
@@ -190,6 +203,7 @@ export function ProductsBrowser() {
   };
 
   const toggleApplication = (slug: ApplicationSlug) => {
+    scrollToTop();
     setFilters((current) => ({
       ...current,
       applications: current.applications.includes(slug)
@@ -198,7 +212,10 @@ export function ProductsBrowser() {
     }));
   };
 
-  const clearAll = useCallback(() => setFilters(EMPTY_FILTERS), []);
+  const clearAll = useCallback(() => {
+    scrollToTop();
+    setFilters(EMPTY_FILTERS);
+  }, [scrollToTop]);
   const total = activeCount(filters);
 
   const consolidated = [
@@ -232,7 +249,10 @@ export function ProductsBrowser() {
           {
             key: "query",
             label: `“${filters.query.trim()}”`,
-            remove: () => setFilters((current) => ({ ...current, query: "" })),
+            remove: () => {
+              scrollToTop();
+              setFilters((current) => ({ ...current, query: "" }));
+            },
           },
         ]
       : []),
@@ -268,7 +288,10 @@ export function ProductsBrowser() {
                 {filters.query && (
                   <button
                     type="button"
-                    onClick={() => setFilters((current) => ({ ...current, query: "" }))}
+                    onClick={() => {
+                      scrollToTop();
+                      setFilters((current) => ({ ...current, query: "" }));
+                    }}
                     aria-label="Clear search"
                     className="flex h-6 w-6 lg:h-[1.4vw] lg:w-[1.4vw] shrink-0 items-center justify-center rounded-full text-mid/80 transition-colors hover:bg-line/60 hover:text-ink focus:outline-none"
                   >
@@ -446,7 +469,10 @@ export function ProductsBrowser() {
             <div className="border-t border-line p-4">
               <button
                 type="button"
-                onClick={() => setDrawerOpen(false)}
+                onClick={() => {
+                  scrollToTop();
+                  setDrawerOpen(false);
+                }}
                 className="h-12 w-full bg-brand text-sm font-medium text-white"
               >
                 Show {results.length} container{results.length === 1 ? "" : "s"}
