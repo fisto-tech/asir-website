@@ -24,9 +24,9 @@ export function ScrollRotatingLid({
       const posWrapper = lidPositionRef.current;
       const spinWrapper = lidAutoSpinRef.current;
       const rootEl = root.current;
-      if (!posWrapper || !spinWrapper || !rootEl || reduceMotion()) return;
+      if (!posWrapper || !spinWrapper || !rootEl) return;
 
-      // The shell container where both header and alternating cards are located
+      // The shell container where all cards are located
       const shell = (rootEl.closest(".shell") as HTMLElement | null) || rootEl.parentElement;
       if (!shell) return;
 
@@ -34,87 +34,108 @@ export function ScrollRotatingLid({
       const card2 = shell.querySelector<HTMLElement>("[data-topic-card='2']");
       const card3 = shell.querySelector<HTMLElement>("[data-topic-card='3']");
 
-      const mm = gsap.matchMedia();
+      const getLidDimensions = () => {
+        const lidBody = rootEl.querySelector<HTMLElement>("[data-lid-body]");
+        return {
+          width: lidBody?.offsetWidth || 320,
+          height: lidBody?.offsetHeight || 320,
+        };
+      };
 
-      // Helper to calculate target coordinate relative to root's starting position in shell (Desktop)
+      // Helper to calculate target coordinate for Desktop (>= 1024px)
+      // Root is at top-0 left-0 of shell, so coordinates are direct positions inside shell.
       const getDesktopCardTarget = (
         card: HTMLElement | null,
         isLeftCard: boolean
       ) => {
-        if (!card || !shell || !rootEl) return { x: 0, y: 0 };
+        if (!card || !shell) return { x: 0, y: 0 };
         const shellRect = shell.getBoundingClientRect();
-        const rootRect = rootEl.getBoundingClientRect();
         const cardRect = card.getBoundingClientRect();
+        const { width: lidW, height: lidH } = getLidDimensions();
 
-        // Initial root position within shell
-        const rootXInShell = rootRect.left - shellRect.left;
-        const rootYInShell = rootRect.top - shellRect.top;
-
-        // Card position within shell
         const cardXInShell = cardRect.left - shellRect.left;
         const cardYInShell = cardRect.top - shellRect.top;
 
-        const lidW = rootRect.width || 320;
-        const lidH = rootRect.height || 320;
-
         // On desktop (>= 1024px):
-        // For Left Card (Topic 1 & 3): Center is positioned near the right edge of the card
-        // For Right Card (Topic 2): Center is positioned near the left edge of the card
+        // Exactly 40% of the lid visible protruding from card, 60% tucked behind card
+        // Card 1 & 3: Tucked behind right edge of card (40% protruding out)
+        // Card 2: Tucked behind left edge of card (40% protruding out)
         const targetCenterX = isLeftCard
-          ? cardXInShell + cardRect.width - (lidW * 0.12)
-          : cardXInShell + (lidW * 0.12);
+          ? cardXInShell + cardRect.width - (lidW * 0.10)
+          : cardXInShell + (lidW * 0.10);
         const targetCenterY = cardYInShell + (cardRect.height * 0.5);
 
         return {
-          x: targetCenterX - (lidW * 0.5) - rootXInShell,
-          y: targetCenterY - (lidH * 0.5) - rootYInShell,
+          x: targetCenterX - (lidW * 0.5),
+          y: targetCenterY - (lidH * 0.5),
         };
       };
 
       // Helper to calculate target coordinate for Tablet (768px - 1023px)
-      // On tablet:
-      // - Card 1 & 3: Image card is on left (justify-start). Lid tucks into the back side of the card,
-      //   with ~35% of the lid tucked behind the card and ~65% protruding out to the right.
-      // - Card 2: Image card is on right (justify-end). Lid tucks into the back side of the card,
-      //   with ~35% of the lid tucked behind the card and ~65% protruding out to the left.
       const getTabletCardTarget = (
         card: HTMLElement | null,
         isLeftCard: boolean
       ) => {
-        if (!card || !shell || !rootEl) return { x: 0, y: 0 };
+        if (!card || !shell) return { x: 0, y: 0 };
         const shellRect = shell.getBoundingClientRect();
-        const rootRect = rootEl.getBoundingClientRect();
         const cardRect = card.getBoundingClientRect();
-
-        const rootXInShell = rootRect.left - shellRect.left;
-        const rootYInShell = rootRect.top - shellRect.top;
+        const { width: lidW, height: lidH } = getLidDimensions();
 
         const cardXInShell = cardRect.left - shellRect.left;
         const cardYInShell = cardRect.top - shellRect.top;
 
-        const lidW = rootRect.width || 240;
-        const lidH = rootRect.height || 240;
-
-        // Position horizontally: tucked behind the edge of the card (approx 14% past card edge)
         const targetCenterX = isLeftCard
-          ? cardXInShell + cardRect.width + (lidW * 0.14)
-          : cardXInShell - (lidW * 0.14);
-
-        // Position vertically: aligned with the upper container/pail body (approx 42% from top of card)
-        const targetCenterY = cardYInShell + (cardRect.height * 0.42);
+          ? cardXInShell + cardRect.width - (lidW * 0.10)
+          : cardXInShell + (lidW * 0.10);
+        const targetCenterY = cardYInShell + (cardRect.height * 0.45);
 
         return {
-          x: targetCenterX - (lidW * 0.5) - rootXInShell,
-          y: targetCenterY - (lidH * 0.5) - rootYInShell,
+          x: targetCenterX - (lidW * 0.5),
+          y: targetCenterY - (lidH * 0.5),
         };
       };
 
-      // 1. MOBILE SCREEN (< 768px):
-      // - Stays docked at top-right of section header (no scroll-driven translation movement)
-      // - Self-rotation: continuously spins smoothly on its own axis
-      mm.add("(max-width: 767.98px)", () => {
-        gsap.set(posWrapper, { x: 0, y: 0, rotation: 0 });
+      // Helper to calculate target coordinate for Mobile (< 768px)
+      const getMobileCardTarget = (
+        card: HTMLElement | null,
+        isLeftCard: boolean
+      ) => {
+        if (!card || !shell) return { x: 0, y: 0 };
+        const shellRect = shell.getBoundingClientRect();
+        const cardRect = card.getBoundingClientRect();
+        const { width: lidW, height: lidH } = getLidDimensions();
 
+        const cardXInShell = cardRect.left - shellRect.left;
+        const cardYInShell = cardRect.top - shellRect.top;
+
+        let targetCenterX = isLeftCard
+          ? cardXInShell + cardRect.width - (lidW * 0.10)
+          : cardXInShell + (lidW * 0.10);
+
+        // Clamp within shell boundaries so horizontal scroll never happens
+        targetCenterX = Math.max(lidW * 0.5, Math.min(shellRect.width - (lidW * 0.5), targetCenterX));
+        const targetCenterY = cardYInShell + (cardRect.height * 0.35);
+
+        return {
+          x: targetCenterX - (lidW * 0.5),
+          y: targetCenterY - (lidH * 0.5),
+        };
+      };
+
+      if (reduceMotion()) {
+        gsap.set(posWrapper, {
+          x: () => getDesktopCardTarget(card1, true).x,
+          y: () => getDesktopCardTarget(card1, true).y,
+          rotation: 0,
+        });
+        return;
+      }
+
+      const mm = gsap.matchMedia();
+
+      // 1. MOBILE SCREEN (< 768px):
+      // Starts docked at Card 1, rotates and glides across alternating cards on scroll
+      mm.add("(max-width: 767.98px)", () => {
         const autoSpin = gsap.to(spinWrapper, {
           rotation: 360,
           duration: 20,
@@ -122,14 +143,56 @@ export function ScrollRotatingLid({
           ease: "none",
         });
 
+        // Set initial position immediately at Card 1
+        gsap.set(posWrapper, {
+          x: () => getMobileCardTarget(card1, true).x,
+          y: () => getMobileCardTarget(card1, true).y,
+          rotation: 0,
+        });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: card1,
+            endTrigger: mode === "3-topics" ? card3 : card2,
+            start: "center 75%",
+            end: "center 45%",
+            scrub: 1.0,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        if (mode === "3-topics") {
+          tl.to(posWrapper, {
+            x: () => getMobileCardTarget(card2, false).x,
+            y: () => getMobileCardTarget(card2, false).y,
+            rotation: 180,
+            duration: 0.5,
+            ease: "power1.inOut",
+          })
+            .to(posWrapper, {
+              x: () => getMobileCardTarget(card3, true).x,
+              y: () => getMobileCardTarget(card3, true).y,
+              rotation: 360,
+              duration: 0.5,
+              ease: "power1.inOut",
+            });
+        } else {
+          tl.to(posWrapper, {
+            x: () => getMobileCardTarget(card2, false).x,
+            y: () => getMobileCardTarget(card2, false).y,
+            rotation: 220,
+            duration: 1.0,
+            ease: "power1.inOut",
+          });
+        }
+
         return () => {
           autoSpin.kill();
         };
       });
 
       // 2. TABLET SCREEN (768px - 1023px):
-      // - Continuous auto-rotation
-      // - Scroll-driven glide & rotation into the exact marked spaces beside alternating cards
+      // Starts at Card 1, rotates and glides behind alternating cards on scroll
       mm.add("(min-width: 768px) and (max-width: 1023.98px)", () => {
         const autoSpin = gsap.to(spinWrapper, {
           rotation: 360,
@@ -138,89 +201,47 @@ export function ScrollRotatingLid({
           ease: "none",
         });
 
+        // Set initial position immediately at Card 1
+        gsap.set(posWrapper, {
+          x: () => getTabletCardTarget(card1, true).x,
+          y: () => getTabletCardTarget(card1, true).y,
+          rotation: 0,
+        });
+
         const tl = gsap.timeline({
           scrollTrigger: {
-            trigger: shell,
-            start: "top 30%",
-            end: "bottom 85%",
+            trigger: card1,
+            endTrigger: mode === "3-topics" ? card3 : card2,
+            start: "center 70%",
+            end: "center 40%",
             scrub: 1.0,
             invalidateOnRefresh: true,
           },
         });
 
-        // Initial Hold in header
-        tl.to(posWrapper, {
-          x: 0,
-          y: 0,
-          rotation: 0,
-          duration: 0.05,
-          ease: "none",
-        });
-
         if (mode === "3-topics") {
-          // PRODUCTION MACHINERIES:
-          // Phase 1: Glides to Card 1 (Screen Printing - right of image)
           tl.to(posWrapper, {
-            x: () => getTabletCardTarget(card1, true).x,
-            y: () => getTabletCardTarget(card1, true).y,
+            x: () => getTabletCardTarget(card2, false).x,
+            y: () => getTabletCardTarget(card2, false).y,
             rotation: 180,
-            duration: 0.22,
+            duration: 0.5,
             ease: "power1.inOut",
           })
-            .to(posWrapper, {
-              duration: 0.08,
-              ease: "none",
-            })
-            // Phase 2: Glides to Card 2 (HTL - left of image)
-            .to(posWrapper, {
-              x: () => getTabletCardTarget(card2, false).x,
-              y: () => getTabletCardTarget(card2, false).y,
-              rotation: 360,
-              duration: 0.24,
-              ease: "power1.inOut",
-            })
-            .to(posWrapper, {
-              duration: 0.08,
-              ease: "none",
-            })
-            // Phase 3: Glides to Card 3 (IML - right of image)
             .to(posWrapper, {
               x: () => getTabletCardTarget(card3, true).x,
               y: () => getTabletCardTarget(card3, true).y,
-              rotation: 540,
-              duration: 0.22,
+              rotation: 360,
+              duration: 0.5,
               ease: "power1.inOut",
-            })
-            .to(posWrapper, {
-              duration: 0.11,
-              ease: "none",
             });
         } else {
-          // AUXILIARIES:
-          // Phase 1: Glides to Card 1 (Chiller 1 - right of image)
           tl.to(posWrapper, {
-            x: () => getTabletCardTarget(card1, true).x,
-            y: () => getTabletCardTarget(card1, true).y,
+            x: () => getTabletCardTarget(card2, false).x,
+            y: () => getTabletCardTarget(card2, false).y,
             rotation: 220,
-            duration: 0.36,
+            duration: 1.0,
             ease: "power1.inOut",
-          })
-            .to(posWrapper, {
-              duration: 0.1,
-              ease: "none",
-            })
-            // Phase 2: Glides to Card 2 (Chiller 2 - left of image)
-            .to(posWrapper, {
-              x: () => getTabletCardTarget(card2, false).x,
-              y: () => getTabletCardTarget(card2, false).y,
-              rotation: 440,
-              duration: 0.36,
-              ease: "power1.inOut",
-            })
-            .to(posWrapper, {
-              duration: 0.1,
-              ease: "none",
-            });
+          });
         }
 
         return () => {
@@ -229,8 +250,7 @@ export function ScrollRotatingLid({
       });
 
       // 3. DESKTOP SCREEN (>= 1024px):
-      // - Continuous auto-rotation
-      // - Scroll-driven glide & rotation across 2-column alternating grid layout
+      // Starts at Card 1, rotates and glides behind alternating cards across 2-column layout
       mm.add("(min-width: 1024px)", () => {
         const autoSpin = gsap.to(spinWrapper, {
           rotation: 360,
@@ -239,69 +259,52 @@ export function ScrollRotatingLid({
           ease: "none",
         });
 
+        // Set initial position immediately at Card 1 (Topic 1)
+        gsap.set(posWrapper, {
+          x: () => getDesktopCardTarget(card1, true).x,
+          y: () => getDesktopCardTarget(card1, true).y,
+          rotation: 0,
+        });
+
         const tl = gsap.timeline({
           scrollTrigger: {
-            trigger: shell,
-            start: "top 30%",
-            end: "bottom 85%",
+            trigger: card1,
+            endTrigger: mode === "3-topics" ? card3 : card2,
+            start: "center 70%",
+            end: "center 40%",
             scrub: 1.0,
             invalidateOnRefresh: true,
           },
         });
 
-        // 1. Initial Hold: Keeps lid docked prominently in the top-right open space while viewing header
-        tl.to(posWrapper, {
-          x: 0,
-          y: 0,
-          rotation: 0,
-          duration: 0.05,
-          ease: "none",
-        });
-
         if (mode === "3-topics") {
           // PRODUCTION MACHINERIES (3 topics):
-          // Phase 1: Glides to Card 1 (Screen Printing - Card on Left)
+          // Phase 1: Glides from Card 1 (Screen Printing - Left) to Card 2 (HTL - Right)
           tl.to(posWrapper, {
-            x: () => getDesktopCardTarget(card1, true).x,
-            y: () => getDesktopCardTarget(card1, true).y,
+            x: () => getDesktopCardTarget(card2, false).x,
+            y: () => getDesktopCardTarget(card2, false).y,
             rotation: 180,
-            duration: 0.3,
+            duration: 0.5,
             ease: "power1.inOut",
           })
-            // Phase 2: Glides across to Card 2 (HTL - Card on Right)
-            .to(posWrapper, {
-              x: () => getDesktopCardTarget(card2, false).x,
-              y: () => getDesktopCardTarget(card2, false).y,
-              rotation: 360,
-              duration: 0.3,
-              ease: "power1.inOut",
-            })
-            // Phase 3: Glides back to Card 3 (IML - Card on Left)
+            // Phase 2: Glides from Card 2 (HTL - Right) back to Card 3 (IML - Left)
             .to(posWrapper, {
               x: () => getDesktopCardTarget(card3, true).x,
               y: () => getDesktopCardTarget(card3, true).y,
-              rotation: 540,
-              duration: 0.3,
+              rotation: 360,
+              duration: 0.5,
               ease: "power1.inOut",
             });
         } else {
           // AUXILIARIES (2 topics):
-          // Phase 1: Glides to Card 1 (Chiller 1 - Card on Left)
+          // Phase 1: Glides from Card 1 (Chiller 1 - Left) to Card 2 (Chiller 2 - Right)
           tl.to(posWrapper, {
-            x: () => getDesktopCardTarget(card1, true).x,
-            y: () => getDesktopCardTarget(card1, true).y,
+            x: () => getDesktopCardTarget(card2, false).x,
+            y: () => getDesktopCardTarget(card2, false).y,
             rotation: 220,
-            duration: 0.45,
+            duration: 1.0,
             ease: "power1.inOut",
-          })
-            // Phase 2: Glides across to Card 2 (Chiller 2 - Card on Right)
-            .to(posWrapper, {
-              x: () => getDesktopCardTarget(card2, false).x,
-              y: () => getDesktopCardTarget(card2, false).y,
-              rotation: 440,
-              duration: 0.45,
-              ease: "power1.inOut",
-            });
+          });
         }
 
         return () => {
@@ -309,7 +312,13 @@ export function ScrollRotatingLid({
         };
       });
 
+      // Refresh ScrollTrigger after elements settle
+      const timer = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 250);
+
       return () => {
+        clearTimeout(timer);
         mm.revert();
       };
     },
@@ -356,16 +365,17 @@ export function ScrollRotatingLid({
   return (
     <div
       ref={root}
-      className={`absolute top-2 sm:top-4 lg:top-8 right-2 sm:right-4 lg:right-8 xl:right-12 pointer-events-auto z-[5] select-none ${className}`}
+      className={`absolute top-0 left-0 pointer-events-none z-[5] select-none ${className}`}
       aria-hidden="true"
     >
       {/* Scroll-driven translating container */}
-      <div ref={lidPositionRef} className="relative will-change-transform">
+      <div ref={lidPositionRef} className="relative will-change-transform pointer-events-auto">
         {/* Continuous slow-motion auto-rotating wrapper */}
         <div ref={lidAutoSpinRef} className="relative will-change-transform">
           {/* Interactive hover/tilt/click container */}
           <div
             ref={interactiveRef}
+            data-lid-body
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             onClick={handleClick}
@@ -374,7 +384,7 @@ export function ScrollRotatingLid({
             title="Click to spin!"
             className="relative w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] lg:w-[330px] lg:h-[330px] xl:w-[380px] xl:h-[380px] cursor-pointer [perspective:1000px] group/lid"
           >
-            {/* Pure, Clean High-Resolution Transparent Blue Lid Image — No gradient, no overlay text */}
+            {/* Pure, Clean High-Resolution Transparent Blue Lid Image */}
             <div className="relative w-full h-full">
               <Image
                 src="/images/blue-lid.webp"

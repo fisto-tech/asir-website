@@ -10,30 +10,18 @@ import { Button } from "@/components/ui/Button";
 import { navigation, site } from "@/data/site";
 import { products } from "@/data/products";
 
-// Product display configuration matching reference card design (using optimized nav-thumbs)
-const navProductItems = [
-  { slug: "500ml-paint-pail-p2", title: "500ml", code: "P/2", img: "/images/products/nav-thumbs/500ml.webp" },
-  { slug: "1l-paint-pail-p1a", title: "1 Litre", code: "P1a", img: "/images/products/nav-thumbs/1ltr.webp" },
-  { slug: "1l-paint-pail-p1b", title: "1 Litre", code: "P1b", img: "/images/products/nav-thumbs/1ltr.webp" },
-  { slug: "4l-paint-pail-p4", title: "4 Litre", code: "P4", img: "/images/products/nav-thumbs/4ltr.webp" },
-  { slug: "10l-paint-pail-p10", title: "10 Litre", code: "P10p", img: "/images/products/nav-thumbs/10ltr.webp" },
-  { slug: "20l-paint-pail-p20a", title: "20 Litre", code: "P20ap", img: "/images/products/nav-thumbs/20Ltr.webp" },
-  { slug: "20l-paint-pail-p20b", title: "20 Litre", code: "P20bp", img: "/images/products/nav-thumbs/20Ltr.webp" },
-  { slug: "1kg-storage-pail-k1", title: "1 Kg", code: "K1", img: "/images/products/nav-thumbs/1kg.webp" },
-  { slug: "2kg-storage-pail-k2", title: "2 Kg", code: "K2", img: "/images/products/nav-thumbs/2kg.webp" },
-  { slug: "5kg-storage-pail-k5", title: "5 Kg", code: "K5", img: "/images/products/nav-thumbs/5kg.webp" },
-  { slug: "10kg-storage-pail-k10", title: "10 Kg", code: "K10p", img: "/images/products/nav-thumbs/10kg.webp" },
-  { slug: "20kg-storage-pail-k20", title: "20 Kg", code: "K20p", img: "/images/products/nav-thumbs/20kg.webp" },
-  { slug: "5l-round-pail-a5", title: "5 litre round", code: "A5", img: "/images/products/nav-thumbs/5ltr.webp" },
-  { slug: "5l-square-interlock-pail-f5", title: "5 Litre square", code: "F5p", img: "/images/products/nav-thumbs/5kgsquare.webp" },
-  { slug: "17l-square-interlock-pail-f17i", title: "17 Litre interlock", code: "F17ip", img: "/images/products/nav-thumbs/17kgsquare.webp" },
-  { slug: "17l-square-outer-lock-pail-f17o", title: "17 Litre outer lock", code: "F17op", img: "/images/products/nav-thumbs/17kgsquaarelock.webp" },
-  { slug: "15l-square-interlock-pail-f15", title: "15 Litre Interlock", code: "F15p", img: "/images/products/nav-thumbs/15ltr.webp" },
-];
+// Product display configuration using the product section images directly from data/products
+const navProductItems = products.map((item) => ({
+  slug: item.slug,
+  title: item.name,
+  code: item.codes.plain,
+  img: item.image,
+}));
 
 function DropdownProductItem({
   item,
   onNavigate,
+  isParentOpen,
 }: {
   item: {
     slug: string;
@@ -42,16 +30,33 @@ function DropdownProductItem({
     img: string;
   };
   onNavigate: (href: string, e?: React.MouseEvent) => void;
+  isParentOpen: boolean;
 }) {
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
-  // Fix missed-onLoad bug: if image is already cached/complete on mount, reveal immediately
+  // When popup opens, display skeleton loading for images & texts then reveal smoothly
   useEffect(() => {
+    if (!isParentOpen) {
+      setLoaded(false);
+      return;
+    }
+
+    let timer: NodeJS.Timeout;
     if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+      timer = setTimeout(() => {
+        setLoaded(true);
+      }, 260);
+    }
+
+    return () => clearTimeout(timer);
+  }, [isParentOpen]);
+
+  const onImageLoad = () => {
+    if (isParentOpen) {
       setLoaded(true);
     }
-  }, []);
+  };
 
   return (
     <Link
@@ -60,12 +65,12 @@ function DropdownProductItem({
       className="group relative flex h-[62px] lg:h-[4.2vw] items-center justify-between rounded-2xl lg:rounded-[1vw] border-[1.5px] border-blue-200/90 hover:border-brand bg-white hover:bg-brand px-3 lg:px-[0.8vw] py-2 lg:py-[0.5vw] transition-all duration-300 hover:shadow-md cursor-pointer"
     >
       <div className="flex items-center gap-3 lg:gap-[0.7vw] min-w-0 pr-1 flex-1">
-        {/* Small Image Area Skeleton (pulse overlay disappears once image loads) */}
-        <div className="relative flex h-11 w-11 lg:h-[3vw] lg:w-[3vw] shrink-0 items-center justify-center rounded-xl lg:rounded-[0.7vw] bg-slate-100 group-hover:bg-white transition-all duration-300 shadow-2xs overflow-hidden">
+        {/* Small Image Area: logo background (#003b93) -> light blue (#cde2fd) on hover */}
+        <div className="relative flex h-11 w-11 lg:h-[3vw] lg:w-[3vw] shrink-0 items-center justify-center rounded-xl lg:rounded-[0.7vw] bg-[#003b93] group-hover:bg-[#cde2fd] transition-colors duration-300 shadow-2xs overflow-hidden p-1">
           {!loaded && (
             <div
               aria-hidden="true"
-              className="absolute inset-0 bg-gradient-to-r from-slate-200/90 via-slate-100/95 to-slate-200/90 animate-pulse rounded-xl lg:rounded-[0.7vw]"
+              className="absolute inset-0 bg-[#002f77] animate-pulse rounded-xl lg:rounded-[0.7vw]"
             />
           )}
           <Image
@@ -75,24 +80,30 @@ function DropdownProductItem({
             width={120}
             height={120}
             sizes="(min-width:1024px) 3vw, 44px"
-            unoptimized
-            onLoad={() => setLoaded(true)}
-            onError={() => setLoaded(true)}
-            className={`relative z-10 max-h-10 lg:max-h-[2.6vw] w-auto object-contain transition-opacity duration-300 group-hover:scale-105 ${
+            onLoad={onImageLoad}
+            onError={onImageLoad}
+            className={`relative z-10 max-h-9 lg:max-h-[2.4vw] w-auto object-contain transition-opacity duration-300 group-hover:scale-105 drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] ${
               loaded ? "opacity-100" : "opacity-0"
             }`}
           />
         </div>
 
-        {/* Title & Code: Always immediately visible with no opacity gating and no skeleton lines */}
-        <div className="flex flex-col min-w-0 justify-center flex-1">
-          <span className="text-[12.5px] lg:text-[0.84vw] font-semibold leading-tight text-slate-800 group-hover:text-white transition-colors duration-300 truncate">
-            {item.title}
-          </span>
-          <span className="text-[11px] lg:text-[0.72vw] font-normal text-slate-400 group-hover:text-blue-100 transition-colors duration-300 mt-0.5">
-            Code : {item.code}
-          </span>
-        </div>
+        {/* Title & Code: Skeleton shimmer lines while loading -> real text once loaded */}
+        {!loaded ? (
+          <div className="flex flex-col min-w-0 justify-center flex-1 space-y-1.5 py-0.5" aria-hidden="true">
+            <div className="h-3 w-16 sm:w-20 lg:w-[4.8vw] rounded bg-slate-200/90 animate-pulse" />
+            <div className="h-2.5 w-12 sm:w-14 lg:w-[3.2vw] rounded bg-slate-100 animate-pulse" />
+          </div>
+        ) : (
+          <div className="flex flex-col min-w-0 justify-center flex-1 animate-in fade-in duration-200">
+            <span className="text-[12.5px] lg:text-[0.84vw] font-semibold leading-tight text-slate-800 group-hover:text-white transition-colors duration-300 truncate">
+              {item.title}
+            </span>
+            <span className="text-[11px] lg:text-[0.72vw] font-normal text-slate-400 group-hover:text-blue-100 transition-colors duration-300 mt-0.5">
+              Code : {item.code}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Action Chevron: Always final styled state */}
@@ -662,6 +673,7 @@ export function Header() {
                   key={item.slug}
                   item={item}
                   onNavigate={navigateTo}
+                  isParentOpen={productsOpen}
                 />
               ))}
             </div>

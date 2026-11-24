@@ -259,7 +259,7 @@ export function ProductsBrowser() {
   ];
 
   return (
-    <div className="bg-white pb-24 lg:pb-[5vw]">
+    <div className="bg-[#dfdfdf] pb-24 lg:pb-[5vw] ">
       {/* Product Range Page Masthead with Search Input on Right */}
       <Reveal>
         <PageMasthead
@@ -304,8 +304,8 @@ export function ProductsBrowser() {
         />
       </Reveal>
 
-      <div className="shell max-w-[1440px] lg:max-w-[92vw] px-5 sm:px-8 lg:px-[4vw]">
-        <div className="grid gap-6 pt-2 sm:pt-3 lg:pt-[0.8vw] lg:grid-cols-12 lg:gap-[2vw] xl:gap-[2.5vw]">
+      <div className="shell max-w-[1440px] lg:max-w-[92vw] px-5 sm:px-8 lg:px-[4vw] ">
+        <div className="grid gap-6 pt-2 sm:pt-3 lg:pt-[0.8vw] lg:grid-cols-12 lg:gap-[2vw] xl:gap-[2.5vw] ">
           {/* Desktop filter rail */}
           <aside className="hidden lg:col-span-4 lg:block xl:col-span-3">
             <div

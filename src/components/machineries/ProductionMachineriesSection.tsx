@@ -5,6 +5,7 @@ import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
 import { useScrollReveal } from "@/lib/animations";
 import { ScrollRotatingLid } from "@/components/machineries/ScrollRotatingLid";
+import { HeroFloatingContainer } from "@/components/machineries/HeroFloatingContainer";
 
 export function ProductionMachineriesSection() {
   const root = useRef<HTMLElement | null>(null);
@@ -26,13 +27,13 @@ export function ProductionMachineriesSection() {
       />
 
       <div className="shell relative z-10 max-w-[1440px] lg:max-w-[92vw] px-5 sm:px-8 lg:px-[4vw]">
-        {/* Interactive Scroll-Rotating Lid: Positioned inside shell, begins in top-right hero circle, rotates and glides behind alternating image cards */}
+        {/* Interactive Scroll-Rotating Lid: Positioned inside shell, begins at Topic 1, rotates and glides behind alternating image cards */}
         <ScrollRotatingLid mode="3-topics" />
 
         <div className="space-y-12 lg:space-y-[3.5vw]">
-          {/* Section Header Area — Dedicated height & right-side clearance so the lid NEVER merges with text */}
+          {/* Section Header Area — Incorporates floating container in marked position */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[240px] sm:min-h-[260px] lg:min-h-[20vw] pb-6 lg:pb-[2vw] border-b border-slate-300/30">
-            <div className="lg:col-span-7 relative z-20 max-w-2xl lg:max-w-[42vw] pr-20 sm:pr-24 lg:pr-0">
+            <div className="lg:col-span-7 relative z-20 max-w-2xl lg:max-w-[42vw]">
               <h2 className="font-display text-[1.8rem] sm:text-[2.75rem] lg:text-[2.6vw] font-extrabold text-slate-900 tracking-tight leading-tight">
                 High-Volume Industrial <br />
                 <span className="text-[#0066cc]">Decoration & Moulding Lines.</span>
@@ -41,8 +42,10 @@ export function ProductionMachineriesSection() {
                 Three dedicated in-house decoration lines combined with automated injection cells provide complete flexibility, photographic fidelity, and industrial endurance for every packaging run.
               </p>
             </div>
-            {/* Right column empty spacer — explicitly reserves the space for the lid */}
-            <div className="lg:col-span-5 hidden lg:block" aria-hidden="true" />
+            {/* Right column: Floating container in marked position */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-end items-center relative z-20">
+              <HeroFloatingContainer />
+            </div>
           </div>
 
           {/* TOPIC 1: Screen Printing (Image Left, Content Right) */}
